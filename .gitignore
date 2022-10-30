@@ -18,7 +18,7 @@ artifacts
 
 # PoT files
 pot/*
-!pot/pot16_final.ptau
+!pot/.gitkeep
 
 # yarn
 .pnp.*

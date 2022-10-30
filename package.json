@@ -31,7 +31,8 @@
     "generate-inputs": "ts-node scripts/generate-inputs.ts",
     "compile": "yarn compile-eddsa && yarn compile-factor",
     "compile-eddsa": "scripts/compile-circuit.sh EdDSAChecker eddsa",
-    "compile-factor": "scripts/compile-circuit.sh FactorChecker factor"
+    "compile-factor": "scripts/compile-circuit.sh FactorChecker factor",
+    "download-ptau": "curl https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_21.ptau -o pot/pot21_final.ptau"
   },
   "devDependencies": {
     "@big-whale-labs/versioned-contract": "^1.0.2",
