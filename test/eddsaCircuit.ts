@@ -1,5 +1,5 @@
 import { wasm as wasmTester } from 'circom_tester'
-import getEdDSAInputs from '../utils/inputs/getEdDSAInputs'
+import getEdDSAInputs from '../utils/inputs/getECDSAInputs'
 
 describe('EdDSAChecker circuit', function () {
   before(async function () {

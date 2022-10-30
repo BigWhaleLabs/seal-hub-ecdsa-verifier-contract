@@ -1,10 +1,10 @@
 {
-  "name": "zk-starter",
+  "name": "@big-whale-labs/seal-hub-ecdsa-verifier-contract",
   "version": "0.0.1",
-  "description": "ZK project starter",
+  "description": "SealHub ECDSA verifier contract",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/backmeupplz/zk-starter"
+    "url": "git+https://github.com/BigWhaleLabs/seal-hub-ecdsa-verifier-contract"
   },
   "license": "MIT",
   "np": {
@@ -29,15 +29,12 @@
     "release": "np",
     "prepublishOnly": "yarn build && yarn tsc",
     "generate-inputs": "ts-node scripts/generate-inputs.ts",
-    "compile": "yarn compile-eddsa && yarn compile-factor",
-    "compile-eddsa": "scripts/compile-circuit.sh EdDSAChecker eddsa",
-    "compile-factor": "scripts/compile-circuit.sh FactorChecker factor",
+    "compile": "scripts/compile-circuit.sh ECDSAChecker ecdsa",
     "download-ptau": "curl https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_21.ptau -o pot/pot21_final.ptau"
   },
   "devDependencies": {
     "@big-whale-labs/versioned-contract": "^1.0.2",
     "@ethersproject/providers": "^5.7.2",
-    "@noble/ed25519": "^1.7.1",
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.1.2",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
@@ -81,5 +78,8 @@
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=8.3.0"
+  },
+  "dependencies": {
+    "@noble/secp256k1": "^1.7.0"
   }
 }
