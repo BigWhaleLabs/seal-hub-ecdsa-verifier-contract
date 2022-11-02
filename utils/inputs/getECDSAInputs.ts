@@ -1,5 +1,4 @@
 import { BigNumber, utils } from 'ethers'
-import { Point } from '@noble/secp256k1'
 import { buildMimc7 } from 'circomlibjs'
 import wallet from '../ecdsa/wallet'
 
@@ -18,7 +17,14 @@ function bigintToArray(x: bigint, n = regSize, k = regNumber) {
     ret.push(x_temp % mod)
     x_temp = x_temp / mod
   }
-  return ret
+  return ret.map((el) => el.toString())
+}
+
+function pubkeyToXYArrays(pk: string) {
+  const XArr = bigintToArray(BigInt('0x' + pk.slice(4, 4 + 64)))
+  const YArr = bigintToArray(BigInt('0x' + pk.slice(68, 68 + 64)))
+
+  return [XArr, YArr]
 }
 
 async function inputsForMessage(message: string) {
@@ -26,27 +32,17 @@ async function inputsForMessage(message: string) {
   const mimc7 = await buildMimc7()
   const messageHash = mimc7.multiHash(messageBytes)
   const signature = await wallet.signMessage(messageHash)
-  const r = bigintToArray(BigInt('0x' + signature.slice(2, 2 + 64)), 64, 4).map(
-    (el) => el.toString()
-  )
-  const s = bigintToArray(
-    BigInt('0x' + signature.slice(66, 66 + 64)),
-    64,
-    4
-  ).map((el) => el.toString())
-  const { x: pubKeyX, y: pubKeyY } = Point.fromPrivateKey(
-    BigInt(wallet.privateKey)
-  )
+
+  const publicKey = utils.recoverPublicKey(messageHash, signature)
+
+  const r = bigintToArray(BigInt('0x' + signature.slice(2, 2 + 64)), 64, 4)
+  const s = bigintToArray(BigInt('0x' + signature.slice(66, 66 + 64)), 64, 4)
 
   return {
     r,
     s,
-    pubKey: [
-      bigintToArray(pubKeyX).map((v) => BigNumber.from(v).toHexString()),
-      bigintToArray(pubKeyY).map((v) => BigNumber.from(v).toHexString()),
-    ],
-    // message: messageBytes,
-    msgHash: [bigintToArray(BigInt(messageHash), 64, 4)],
+    pubKey: pubkeyToXYArrays(publicKey),
+    msgHash: [bigintToArray(BigNumber.from(messageHash).toBigInt())],
   }
 }
 

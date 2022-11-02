@@ -29,7 +29,7 @@
     "release": "np",
     "prepublishOnly": "yarn build && yarn tsc",
     "generate-inputs": "ts-node scripts/generate-inputs.ts",
-    "compile-circuit": "scripts/compile-circuit.sh ECDSAChecker ecdsa",
+    "compile": "scripts/compile-circuit.sh ECDSAChecker ecdsa",
     "download-ptau": "curl https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_21.ptau -o pot/pot21_final.ptau"
   },
   "devDependencies": {
@@ -78,8 +78,5 @@
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=8.3.0"
-  },
-  "dependencies": {
-    "@noble/secp256k1": "^1.7.0"
   }
 }
