@@ -3,8 +3,8 @@ import { Point } from '@noble/secp256k1'
 import { buildMimc7 } from 'circomlibjs'
 import wallet from '../ecdsa/wallet'
 
-const regSize = 86
-const regNumber = 3
+const regSize = 64
+const regNumber = 4
 
 function bigintToArray(x: bigint, n = regSize, k = regNumber) {
   let mod = 1n
@@ -47,7 +47,7 @@ async function inputsForMessage(message: string) {
       bigintToArray(pubKeyX).map((v) => BigNumber.from(v).toHexString()),
       bigintToArray(pubKeyY).map((v) => BigNumber.from(v).toHexString()),
     ],
-    message: messageBytes,
+    // message: messageBytes,
     msgHash: [
       bigintToArray(mBigInt).map((v) => BigNumber.from(v).toHexString()),
     ],
