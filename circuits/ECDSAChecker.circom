@@ -21,6 +21,8 @@ template ECDSAChecker() {
     }
   }
   verifySignature.result === 1;
+
+  
 }
 
 component main{public [pubKey]} = ECDSAChecker();

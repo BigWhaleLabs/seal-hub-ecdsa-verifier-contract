@@ -2,7 +2,7 @@ import { cwd } from 'process'
 import { resolve } from 'path'
 import { writeFileSync } from 'fs'
 import getECDSAInputs from '../utils/inputs/getECDSAInputs'
-import wallet from '../utils/ecdsa/wallet'
+import wallet from '../utils/wallet'
 
 void (async () => {
   console.log('ECDSA private key', wallet.privateKey)

@@ -1,6 +1,6 @@
 import { BigNumber, utils } from 'ethers'
-import { buildMimc7 } from 'circomlibjs'
-import wallet from '../ecdsa/wallet'
+import Mimc7 from '../Mimc7'
+import wallet from '../wallet'
 
 const regSize = 64
 const regNumber = 4
@@ -20,17 +20,17 @@ function bigintToArray(x: bigint, n = regSize, k = regNumber) {
   return ret.map((el) => el.toString())
 }
 
-function pubkeyToXYArrays(pk: string) {
-  const XArr = bigintToArray(BigInt('0x' + pk.slice(4, 4 + 64)))
-  const YArr = bigintToArray(BigInt('0x' + pk.slice(68, 68 + 64)))
+function publicKeyToArrays(publicKey: string) {
+  const x = bigintToArray(BigInt('0x' + publicKey.slice(4, 4 + 64)))
+  const y = bigintToArray(BigInt('0x' + publicKey.slice(68, 68 + 64)))
 
-  return [XArr, YArr]
+  return [x, y]
 }
 
 async function inputsForMessage(message: string) {
   const messageBytes = utils.toUtf8Bytes(message)
-  const mimc7 = await buildMimc7()
-  const messageHash = mimc7.multiHash(messageBytes)
+  const mimc7 = await new Mimc7().prepare()
+  const messageHash = mimc7.hashWithoutBabyJub(messageBytes)
   const signature = await wallet.signMessage(messageHash)
 
   const publicKey = utils.recoverPublicKey(messageHash, signature)
@@ -41,7 +41,7 @@ async function inputsForMessage(message: string) {
   return {
     r,
     s,
-    pubKey: pubkeyToXYArrays(publicKey),
+    pubKey: publicKeyToArrays(publicKey),
     msgHash: [bigintToArray(BigNumber.from(messageHash).toBigInt())],
   }
 }
