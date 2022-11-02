@@ -26,31 +26,27 @@ async function inputsForMessage(message: string) {
   const mimc7 = await buildMimc7()
   const messageHash = mimc7.multiHash(messageBytes)
   const signature = await wallet.signMessage(messageHash)
-  const { r, s } = utils.splitSignature(signature)
-  const rBigint = BigInt(r)
-  const sBigint = BigInt(s)
-  const rArray = bigintToArray(rBigint).map((v) =>
-    BigNumber.from(v).toHexString()
+  const r = bigintToArray(BigInt('0x' + signature.slice(2, 2 + 64)), 64, 4).map(
+    (el) => el.toString()
   )
-  const sArray = bigintToArray(sBigint).map((v) =>
-    BigNumber.from(v).toHexString()
-  )
+  const s = bigintToArray(
+    BigInt('0x' + signature.slice(66, 66 + 64)),
+    64,
+    4
+  ).map((el) => el.toString())
   const { x: pubKeyX, y: pubKeyY } = Point.fromPrivateKey(
     BigInt(wallet.privateKey)
   )
-  const mBigInt = BigNumber.from(messageHash).toBigInt()
 
   return {
-    r: rArray,
-    s: sArray,
+    r,
+    s,
     pubKey: [
       bigintToArray(pubKeyX).map((v) => BigNumber.from(v).toHexString()),
       bigintToArray(pubKeyY).map((v) => BigNumber.from(v).toHexString()),
     ],
     // message: messageBytes,
-    msgHash: [
-      bigintToArray(mBigInt).map((v) => BigNumber.from(v).toHexString()),
-    ],
+    msgHash: [bigintToArray(BigInt(messageHash), 64, 4)],
   }
 }
 
