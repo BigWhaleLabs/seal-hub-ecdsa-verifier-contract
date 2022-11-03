@@ -1,11 +1,10 @@
 pragma circom 2.0.4;
 
 include "../circom-ecdsa/circuits/ecdsa.circom";
+include "../node_modules/circomlib/circuits/mimc.circom";
 
-template ECDSAChecker() {
-  var k = 4;
-  var n = 64;
-  
+template ECDSAChecker(k, n) {
+  // Verify ECDSA signature
   signal input r[k];
   signal input s[k];
   signal input msgHash[k];
@@ -22,7 +21,14 @@ template ECDSAChecker() {
   }
   verifySignature.result === 1;
 
-  
+  // Hash message
+  component mimc7 = MultiMiMC7(k, 91);
+  mimc7.k <== 0;
+  for (var i = 0; i < k; i++) {
+    mimc7.in[i] <== msgHash[i];
+  }
+
+  signal output commitment <== mimc7.out;
 }
 
-component main{public [pubKey]} = ECDSAChecker();
+component main = ECDSAChecker(4, 64);
