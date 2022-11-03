@@ -30,10 +30,7 @@ function publicKeyToArrays(publicKey: string) {
 async function inputsForMessage(message: string) {
   const messageBytes = utils.toUtf8Bytes(message)
   const mimc7 = await new Mimc7().prepare()
-  const messageHash = mimc7.hashWithoutBabyJub([
-    BigNumber.from(wallet.address),
-    ...messageBytes,
-  ])
+  const messageHash = mimc7.hashWithoutBabyJub(messageBytes)
   const signature = await wallet.signMessage(messageHash)
 
   const publicKey = utils.recoverPublicKey(messageHash, signature)
