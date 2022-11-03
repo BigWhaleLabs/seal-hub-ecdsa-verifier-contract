@@ -22,10 +22,13 @@ template ECDSAChecker(k, n) {
   verifySignature.result === 1;
 
   // Hash message
-  component mimc7 = MultiMiMC7(k, 91);
+  component mimc7 = MultiMiMC7(k * 2, 91);
   mimc7.k <== 0;
   for (var i = 0; i < k; i++) {
-    mimc7.in[i] <== msgHash[i];
+    mimc7.in[i] <== r[i];
+  }
+  for (var i = 0; i < k; i++) {
+    mimc7.in[k + i] <== s[i];
   }
 
   signal output commitment <== mimc7.out;
