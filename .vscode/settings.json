@@ -11,5 +11,6 @@
   ],
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "git.ignoredRepositories": ["circom-ecdsa"]
 }
