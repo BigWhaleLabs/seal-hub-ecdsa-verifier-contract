@@ -13,7 +13,7 @@ describe('ECDSAChecker circuit', function () {
     const witness = await this.circuit.calculateWitness(this.baseInputs)
     await this.circuit.assertOut(witness, {})
 
-    const sig = [
+    const inputs = [
       ...this.baseInputs.r,
       ...this.baseInputs.s,
       ...this.baseInputs.pubKey[0],
@@ -21,7 +21,22 @@ describe('ECDSAChecker circuit', function () {
     ].map((v) => BigNumber.from(v))
 
     const mimc7 = await new Mimc7().prepare()
-    const hash = mimc7.hash(sig)
+    const hash = mimc7.hash(inputs)
     expect(hash).to.equal(witness[1])
+  })
+  it('should fail because inputs are different', async function () {
+    const witness = await this.circuit.calculateWitness(this.baseInputs)
+    await this.circuit.assertOut(witness, {})
+
+    const inputs = [
+      ...this.baseInputs.s,
+      ...this.baseInputs.r,
+      ...this.baseInputs.pubKey[0],
+      ...this.baseInputs.pubKey[1],
+    ].map((v) => BigNumber.from(v))
+
+    const mimc7 = await new Mimc7().prepare()
+    const hash = mimc7.hash(inputs)
+    expect(hash).not.to.equal(witness[1])
   })
 })
