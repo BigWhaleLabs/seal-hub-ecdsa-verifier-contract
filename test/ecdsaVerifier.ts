@@ -4,19 +4,18 @@ import { expect } from 'chai'
 import { version } from '../package.json'
 import getSolidityCallProof from '../utils/getSolidityCallProof'
 
-describe('FactorCheckerVerifier contract', function () {
+describe('ECDSACheckerVerifier contract', function () {
   before(async function () {
-    const factory = await ethers.getContractFactory('FactorCheckerVerifier')
+    const factory = await ethers.getContractFactory('ECDSACheckerVerifier')
     this.contract = await factory.deploy(version)
     await this.contract.deployed()
-    this.proof = await getSolidityCallProof('factor')
+    this.proof = await getSolidityCallProof('ecdsa')
   })
   describe('Constructor', function () {
     it('should deploy the contract with the correct fields', async function () {
       expect(await this.contract.version()).to.equal(version)
     })
   })
-
   it('should successfully verify correct proof', async function () {
     const { a, b, c, input } = this.proof
     const params = [a, b, c, input]
