@@ -16,7 +16,11 @@ void (async () => {
     // Writing inputs
     writeFileSync(
       resolve(cwd(), 'inputs', `input-${name}.json`),
-      JSON.stringify(inputs),
+      JSON.stringify(
+        inputs,
+        (this,
+        (key, value) => (typeof value === 'bigint' ? value.toString() : value)) // return everything else unchanged
+      ),
       'utf-8'
     )
     console.log(`Generated input-${name}.json!`)
