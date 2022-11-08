@@ -2,6 +2,7 @@ import * as bigintConversion from 'bigint-conversion'
 import { ecsign, hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
 import elliptic from 'elliptic'
+import wallet from '../wallet'
 
 const ec = new elliptic.ec('secp256k1')
 const STRIDE = 8n
@@ -59,7 +60,7 @@ const getPointPreComputes = (point) => {
 }
 
 const privKey = bigintConversion.bigintToBuf(
-  BigInt('0xf5b552f608f5b552f608f5b552f6082ff5b552f608f5b552f608f5b552f6082f')
+  BigInt(wallet.privateKey)
 ) as Buffer
 
 function inputsForMessage(message: string) {
