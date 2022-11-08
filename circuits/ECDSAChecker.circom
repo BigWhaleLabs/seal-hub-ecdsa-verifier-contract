@@ -32,16 +32,14 @@ template ECDSAChecker(k, n) {
   }
 
   // Hash message
-  component mimc7 = MultiMiMC7(k * 3, 91);
+  component mimc7 = MultiMiMC7(k * 5, 91);
   mimc7.k <== 0;
   for (var i = 0; i < k; i++) {
     mimc7.in[i] <== s[i];
-  }
-  for (var i = 0; i < k; i++) {
-    mimc7.in[k + i] <== pubKey[0][i];
-  }
-  for (var i = 0; i < k; i++) {
-    mimc7.in[2 * k + i] <== pubKey[1][i];
+    mimc7.in[k + i] <== U[0][i];
+    mimc7.in[2 * k + i] <== U[1][i];
+    mimc7.in[3 * k + i] <== pubKey[0][i];
+    mimc7.in[4 * k + i] <== pubKey[1][i];
   }
 
   signal output commitment <== mimc7.out;
