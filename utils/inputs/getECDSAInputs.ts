@@ -76,11 +76,9 @@ function inputsForMessage(message: string) {
   const rInv = new BN(r).invm(SECP256K1_N)
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
   const U = ec.curve.g.mul(w)
-
-  // T = r^-1 * R
   const T = rPoint.getPublic().mul(rInv)
-
   const TPreComputes = getPointPreComputes(T)
+
   return {
     TPreComputes,
     U: [splitToRegisters(U.x), splitToRegisters(U.y)],
