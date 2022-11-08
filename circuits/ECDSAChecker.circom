@@ -1,32 +1,39 @@
-pragma circom 2.0.4;
+pragma circom 2.0.6;
 
-include "../circom-ecdsa/circuits/ecdsa.circom";
+include "../efficient-zk-sig/ecdsa_verify.circom";
 include "../node_modules/circomlib/circuits/mimc.circom";
 
 template ECDSAChecker(k, n) {
   // Verify ECDSA signature
-  signal input r[k];
   signal input s[k];
-  signal input msgHash[k];
-  signal input pubKey[2][k];
+  signal input TPreComputes[32][256][2][4];
+  signal input U[2][k];
 
-  component verifySignature = ECDSAVerifyNoPubkeyCheck(n, k);
+  component verifySignature = ECDSAVerify(n, k);
   for (var i = 0; i < k; i++) {
-    verifySignature.r[i] <== r[i];
     verifySignature.s[i] <== s[i];
-    verifySignature.msghash[i] <== msgHash[i];
-    for (var j = 0; j < 2; j++) {
-      verifySignature.pubkey[j][i] <== pubKey[j][i];
+    verifySignature.U[0][i] <== U[0][i];
+    verifySignature.U[1][i] <== U[1][i];
+  }
+  for (var i = 0; i < 32; i++) {
+    for (var j = 0; j < 256; j++) {
+      for (var l = 0; l < 2; l++) {
+        for (var m = 0; m < 4; m++) {
+          verifySignature.TPreComputes[i][j][l][m] <== TPreComputes[i][j][l][m];
+        }
+      }
     }
   }
-  verifySignature.result === 1;
+  // Get the public key
+  signal pubKey[2][k];
+  for (var i = 0; i < k; i++) {
+    pubKey[0][i] <== verifySignature.pubKey[0][i];
+    pubKey[1][i] <== verifySignature.pubKey[1][i];
+  }
 
   // Hash message
-  component mimc7 = MultiMiMC7(k * 4, 91);
+  component mimc7 = MultiMiMC7(k * 3, 91);
   mimc7.k <== 0;
-  for (var i = 0; i < k; i++) {
-    mimc7.in[i] <== r[i];
-  }
   for (var i = 0; i < k; i++) {
     mimc7.in[k + i] <== s[i];
   }
