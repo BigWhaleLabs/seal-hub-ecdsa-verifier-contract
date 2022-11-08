@@ -78,5 +78,11 @@
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=8.3.0"
+  },
+  "dependencies": {
+    "@ethereumjs/util": "^8.0.2",
+    "bigint-conversion": "^2.3.0",
+    "bn.js": "^5.2.1",
+    "elliptic": "^6.5.4"
   }
 }

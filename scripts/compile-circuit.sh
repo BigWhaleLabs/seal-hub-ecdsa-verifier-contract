@@ -6,30 +6,30 @@ starEcho () {
   echo "**** $1 ****"
 }
 
-# Compile the circuit
-starEcho "COMPILING CIRCUIT"
-circom "circuits/$1.circom" --r1cs --wasm --sym --c -o build
+# # Compile the circuit
+# starEcho "COMPILING CIRCUIT"
+# circom "circuits/$1.circom" --r1cs --wasm --sym --c -o build
 
-# Generate witness
-starEcho "GENERATING WITNESS FOR SAMPLE INPUT"
-node "build/$1_js/generate_witness.js" "build/$1_js/$1.wasm" "inputs/input-$2.json" "build/witness-$2.wtns"
+# # Generate witness
+# starEcho "GENERATING WITNESS FOR SAMPLE INPUT"
+# node "build/$1_js/generate_witness.js" "build/$1_js/$1.wasm" "inputs/input-$2.json" "build/witness-$2.wtns"
 
-# Generate zkey 0000
-starEcho "GENERATING ZKEY 0000"
-yarn snarkjs groth16 setup "build/$1.r1cs" pot/pot21_final.ptau "pot/$1_0000.zkey"
+# # Generate zkey 0000
+# starEcho "GENERATING ZKEY 0000"
+# yarn snarkjs groth16 setup "build/$1.r1cs" pot/pot21_final.ptau "pot/$1_0000.zkey"
 
-# Apply random beacon as before
-starEcho "GENERATING FINAL ZKEY"
-yarn snarkjs zkey beacon "pot/$1_0000.zkey" "pot/$1_final.zkey" \
-  0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 10 -n="Final Beacon phase2"
+# # Apply random beacon as before
+# starEcho "GENERATING FINAL ZKEY"
+# yarn snarkjs zkey beacon "pot/$1_0000.zkey" "pot/$1_final.zkey" \
+#   0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 10 -n="Final Beacon phase2"
 
-# Optional: verify final zkey
-starEcho "VERIFYING FINAL ZKEY"
-yarn snarkjs zkey verify "build/$1.r1cs" pot/pot21_final.ptau "pot/$1_final.zkey"
+# # Optional: verify final zkey
+# starEcho "VERIFYING FINAL ZKEY"
+# yarn snarkjs zkey verify "build/$1.r1cs" pot/pot21_final.ptau "pot/$1_final.zkey"
 
-# Export verification key
-starEcho "Exporting vkey"
-yarn snarkjs zkey export verificationkey "pot/$1_final.zkey" "pot/$1_verification_key.json"
+# # Export verification key
+# starEcho "Exporting vkey"
+# yarn snarkjs zkey export verificationkey "pot/$1_final.zkey" "pot/$1_verification_key.json"
 
 # Create the proof
 starEcho "CREATING PROOF FOR SAMPLE INPUT"
