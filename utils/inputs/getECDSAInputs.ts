@@ -1,5 +1,5 @@
-import * as bigintConversion from 'bigint-conversion'
-import { ecsign, hashPersonalMessage } from '@ethereumjs/util'
+import { hashPersonalMessage } from '@ethereumjs/util'
+import { utils } from 'ethers'
 import BN from 'bn.js'
 import elliptic from 'elliptic'
 import wallet from '../wallet'
@@ -59,22 +59,20 @@ const getPointPreComputes = (point) => {
   return gPowers
 }
 
-const privKey = bigintConversion.bigintToBuf(
-  BigInt(wallet.privateKey)
-) as Buffer
-
-function inputsForMessage(message: string) {
+async function inputsForMessage(message: string) {
   const msgHash = hashPersonalMessage(Buffer.from(message))
 
-  const { v, r, s } = ecsign(msgHash, privKey)
+  const signature = await wallet.signMessage(msgHash)
+  const { r, s, v } = utils.splitSignature(signature)
+  const isYOdd = (v - 27) % 2
 
-  const isYOdd = (v - BigInt(27)) % BigInt(2)
+  const bnR = new BN(BigInt(r).toString())
+
   const rPoint = ec.keyFromPublic(
-    ec.curve.pointFromX(new BN(r), isYOdd).encode('hex'),
+    ec.curve.pointFromX(bnR, isYOdd).encode('hex'),
     'hex'
   )
-
-  const rInv = new BN(r).invm(SECP256K1_N)
+  const rInv = bnR.invm(SECP256K1_N)
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
   const U = ec.curve.g.mul(w)
   const T = rPoint.getPublic().mul(rInv)
@@ -83,7 +81,7 @@ function inputsForMessage(message: string) {
   return {
     TPreComputes,
     U: [splitToRegisters(U.x), splitToRegisters(U.y)],
-    s: [splitToRegisters(s.toString('hex'))],
+    s: [splitToRegisters(Buffer.from(s).toString('hex'))],
   }
 }
 
