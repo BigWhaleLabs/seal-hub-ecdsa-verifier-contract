@@ -72,6 +72,7 @@ __metadata:
     ethers: ^5.7.2
     hardhat: ^2.12.1
     hardhat-gas-reporter: ^1.0.9
+    lodash: ^4.17.21
     np: ^7.6.2
     prettier: ^2.7.1
     prettier-plugin-solidity: ^1.0.0-beta.24

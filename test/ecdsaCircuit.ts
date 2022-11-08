@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers'
 import { expect } from 'chai'
 import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
+import _ from 'lodash'
 import getECDSAInputs from '../utils/inputs/getECDSAInputs'
 
 describe('ECDSAChecker circuit', function () {
@@ -14,10 +15,9 @@ describe('ECDSAChecker circuit', function () {
     await this.circuit.assertOut(witness, {})
 
     const inputs = [
-      ...this.baseInputs.r,
-      ...this.baseInputs.s,
-      ...this.baseInputs.pubKey[0],
-      ...this.baseInputs.pubKey[1],
+      ..._.flattenDeep(this.baseInputs.TPreComputes),
+      ..._.flattenDeep(this.baseInputs.U),
+      ..._.flattenDeep(this.baseInputs.s),
     ].map((v) => BigNumber.from(v))
 
     const mimc7 = await new Mimc7().prepare()
@@ -29,10 +29,9 @@ describe('ECDSAChecker circuit', function () {
     await this.circuit.assertOut(witness, {})
 
     const inputs = [
-      ...this.baseInputs.s,
-      ...this.baseInputs.r,
-      ...this.baseInputs.pubKey[0],
-      ...this.baseInputs.pubKey[1],
+      ..._.flattenDeep(this.baseInputs.TPreComputes),
+      ..._.flattenDeep(this.baseInputs.U),
+      ..._.flattenDeep(this.baseInputs.s),
     ].map((v) => BigNumber.from(v))
 
     const mimc7 = await new Mimc7().prepare()
