@@ -30,7 +30,8 @@
     "prepublishOnly": "yarn build && yarn tsc",
     "generate-inputs": "ts-node scripts/generate-inputs.ts",
     "compile": "scripts/compile-circuit.sh ECDSAChecker ecdsa",
-    "download-ptau": "curl https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_18.ptau -o pot/pot18_final.ptau"
+    "download-ptau": "curl https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_18.ptau -o pot/pot18_final.ptau",
+    "download-public": "./scripts/download-public.sh"
   },
   "devDependencies": {
     "@big-whale-labs/versioned-contract": "^1.0.2",
