@@ -3,7 +3,9 @@ import { expect } from 'chai'
 import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
 import _ from 'lodash'
-import getECDSAInputs from '../utils/inputs/getECDSAInputs'
+import getECDSAInputs, {
+  publicKeyToArraysSplitted,
+} from '../utils/inputs/getECDSAInputs'
 import wallet from '../utils/wallet'
 
 describe('ECDSAChecker circuit', function () {
@@ -18,16 +20,19 @@ describe('ECDSAChecker circuit', function () {
     const k = 4
     const prepHash: number[] = []
 
+    const pubKey = publicKeyToArraysSplitted(wallet.publicKey)
+
     for (let i = 0; i < k; i++) {
       prepHash[i] = this.baseInputs.s[i]
       prepHash[k + i] = this.baseInputs.U[0][i]
-      prepHash[i] = this.baseInputs.s[i]
       prepHash[2 * k + i] = this.baseInputs.U[1][i]
-      prepHash[3 * k + i] = wallet.publicKey[0][i] as never
-      prepHash[4 * k + i] = wallet.publicKey[1][i] as never
+      prepHash[3 * k + i] = pubKey[0][i] as never
+      prepHash[4 * k + i] = pubKey[1][i] as never
     }
 
-    const inputs = [..._.flattenDeep(prepHash)].map((v) => BigNumber.from(v))
+    const inputs = [..._.flattenDeep(prepHash.filter((item) => item))].map(
+      (v) => BigNumber.from(v)
+    )
 
     const mimc7 = await new Mimc7().prepare()
     const hash = mimc7.hash(inputs)
