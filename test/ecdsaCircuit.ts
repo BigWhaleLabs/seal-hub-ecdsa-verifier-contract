@@ -29,10 +29,13 @@ describe('ECDSAChecker circuit', function () {
       prepHash[3 * k + i] = pubKey[0][i] as unknown as number
       prepHash[4 * k + i] = pubKey[1][i] as unknown as number
     }
-
-    const inputs = [..._.flattenDeep(prepHash.filter((item) => item))].map(
-      (v) => BigNumber.from(v)
+    const inputs = _.flattenDeep(prepHash.filter((item) => item)).map((v) =>
+      BigInt(v)
     )
+    console.log('---------------------')
+    inputs.forEach((e) => {
+      console.log(e)
+    })
 
     const mimc7 = await new Mimc7().prepare()
     const hash = mimc7.hash(inputs)
