@@ -1,5 +1,5 @@
+import { Wallet, utils } from 'ethers'
 import { hashPersonalMessage } from '@ethereumjs/util'
-import { utils } from 'ethers'
 import BN from 'bn.js'
 import elliptic from 'elliptic'
 import wallet from '../wallet'
@@ -14,6 +14,17 @@ const SECP256K1_N = new BN(
   16
 )
 
+export function publicKeyToArraysSplitted(publicKey: string) {
+  const x = splitToRegisters(
+    new BN(BigInt(addHexPrefix(publicKey.slice(4, 4 + 64))).toString())
+  )
+  const y = splitToRegisters(
+    new BN(BigInt(addHexPrefix(publicKey.slice(68, 68 + 64))).toString())
+  )
+
+  return [x, y]
+}
+
 const addHexPrefix = (str: string) => `0x${str}`
 
 interface ExtendedBasePoint extends elliptic.curve.base.BasePoint {
@@ -27,8 +38,7 @@ const splitToRegisters = (value?: BN | string) => {
   if (!value) {
     return [0n, 0n, 0n, 0n]
   }
-  const hex =
-    typeof value === 'string' ? value : value.toString('hex').padStart(64, '0')
+  const hex = value.toString('hex').padStart(64, '0')
   for (let k = 0; k < REGISTERS; k++) {
     // 64bit = 16 chars in hex
     const val = hex.slice(k * 16, (k + 1) * 16)
@@ -65,32 +75,41 @@ const getPointPreComputes = (point: ExtendedBasePoint) => {
   return gPowers
 }
 
-async function inputsForMessage(message: string) {
+async function inputsForMessage(signer: Wallet, message: string) {
   const msgHash = hashPersonalMessage(Buffer.from(message))
+  const signature = await signer.signMessage(message)
+  const { v, r, s } = utils.splitSignature(signature)
 
-  const signature = await wallet.signMessage(msgHash)
-  const { r, s, v } = utils.splitSignature(signature)
-  const isYOdd = (v - 27) % 2
+  const biV = BigInt(v)
+  const biR = new BN(r.slice(2, r.length), 'hex')
+  const hexS = s.slice(2, s.length)
 
-  const bnR = new BN(BigInt(r).toString())
-
+  const isYOdd = (biV - BigInt(27)) % BigInt(2)
   const rPoint = ec.keyFromPublic(
-    ec.curve.pointFromX(bnR, isYOdd).encode('hex'),
+    ec.curve.pointFromX(new BN(biR), isYOdd).encode('hex'),
     'hex'
   )
-  const rInv = bnR.invm(SECP256K1_N)
+
+  // Get the group element: -(m * r^−1 * G)
+  const rInv = new BN(biR).invm(SECP256K1_N)
+
+  // w = -(r^-1 * msg)
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
+  // U = -(w * G) = -(r^-1 * msg * G)
   const U = ec.curve.g.mul(w)
+
+  // T = r^-1 * R
   const T = rPoint.getPublic().mul(rInv) as ExtendedBasePoint
+
   const TPreComputes = getPointPreComputes(T)
 
   return {
     TPreComputes,
     U: [splitToRegisters(U.x), splitToRegisters(U.y)],
-    s: [splitToRegisters(Buffer.from(s).toString('hex'))],
+    s: [splitToRegisters(hexS)],
   }
 }
 
-export default function () {
-  return inputsForMessage('Signature for SealHub')
+export default function (signer = wallet) {
+  return inputsForMessage(signer, 'Signature for SealHub')
 }
