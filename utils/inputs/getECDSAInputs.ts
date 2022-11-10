@@ -13,27 +13,10 @@ const SECP256K1_N = new BN(
   'fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141',
   16
 )
-const regSize = 64
-const regNumber = 4
-
-function bigintToArray(x: bigint, n = regSize, k = regNumber) {
-  let mod = 1n
-  for (let idx = 0; idx < n; idx++) {
-    mod = mod * 2n
-  }
-
-  const ret = [] as bigint[]
-  let x_temp = x
-  for (let idx = 0; idx < k; idx++) {
-    ret.push(x_temp % mod)
-    x_temp = x_temp / mod
-  }
-  return ret.map((el) => el.toString())
-}
 
 export function publicKeyToArraysSplitted(publicKey: string) {
-  const x = bigintToArray(BigInt('0x' + publicKey.slice(4, 4 + 64)))
-  const y = bigintToArray(BigInt('0x' + publicKey.slice(68, 68 + 64)))
+  const x = splitToRegisters(BigInt('0x' + publicKey.slice(4, 4 + 64)))
+  const y = splitToRegisters(BigInt('0x' + publicKey.slice(68, 68 + 64)))
 
   return [x, y]
 }
