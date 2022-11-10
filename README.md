@@ -36,3 +36,4 @@ Also check out the `.env.example` file for more information.
 - `yarn prettify` — prettifies the code in th project
 - `yarn release` — relases the `typechain` directory to NPM
 - `yarn download-ptau` — downloads the relevant ptau file
+- `yarn download-public` — downloads the relevant public binary files

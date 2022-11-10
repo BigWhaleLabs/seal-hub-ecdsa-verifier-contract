@@ -15,22 +15,30 @@ const SECP256K1_N = new BN(
 )
 
 export function publicKeyToArraysSplitted(publicKey: string) {
-  const x = splitToRegisters(BigInt('0x' + publicKey.slice(4, 4 + 64)))
-  const y = splitToRegisters(BigInt('0x' + publicKey.slice(68, 68 + 64)))
+  const x = splitToRegisters(
+    new BN(BigInt(addHexPrefix(publicKey.slice(4, 4 + 64))).toString())
+  )
+  const y = splitToRegisters(
+    new BN(BigInt(addHexPrefix(publicKey.slice(68, 68 + 64))).toString())
+  )
 
   return [x, y]
 }
 
-const addHexPrefix = (str) => `0x${str}`
+const addHexPrefix = (str: string) => `0x${str}`
 
-const splitToRegisters = (value) => {
+interface ExtendedBasePoint extends elliptic.curve.base.BasePoint {
+  x: BN
+  y: BN
+}
+
+const splitToRegisters = (value?: BN | string) => {
   const registers = [] as bigint[]
 
   if (!value) {
     return [0n, 0n, 0n, 0n]
   }
-
-  const hex = value.toString(16).padStart(64, '0')
+  const hex = value.toString('hex').padStart(64, '0')
   for (let k = 0; k < REGISTERS; k++) {
     // 64bit = 16 chars in hex
     const val = hex.slice(k * 16, (k + 1) * 16)
@@ -41,10 +49,10 @@ const splitToRegisters = (value) => {
   return registers.map((el) => el.toString())
 }
 
-const getPointPreComputes = (point) => {
+const getPointPreComputes = (point: ExtendedBasePoint) => {
   const keyPoint = ec.keyFromPublic({
-    x: Buffer.from(point.x.toString(16), 'hex'),
-    y: Buffer.from(point.y.toString(16), 'hex'),
+    x: Buffer.from(point.x.toString(16), 'hex').toString('hex'),
+    y: Buffer.from(point.y.toString(16), 'hex').toString('hex'),
   })
 
   const gPowers = [] as (bigint[] | string[])[][][]
@@ -54,8 +62,9 @@ const getPointPreComputes = (point) => {
     for (let j = 0n; j < 2n ** STRIDE; j++) {
       const l = j * power
 
-      const gPower = keyPoint.getPublic().mul(new BN(l.toString()))
-
+      const gPower = keyPoint
+        .getPublic()
+        .mul(new BN(l.toString())) as ExtendedBasePoint
       const x = splitToRegisters(gPower.x)
       const y = splitToRegisters(gPower.y)
       stride.push([x, y])
@@ -68,8 +77,11 @@ const getPointPreComputes = (point) => {
 
 function inputsForMessage(signer: Wallet, message: string) {
   const msgHash = hashPersonalMessage(Buffer.from(message))
-  const signature = ecsign(msgHash, BigInt(signer.privateKey))
-  const { r, s, v } = signature // utils.splitSignature(signature)
+  const signature = ecsign(
+    msgHash,
+    Buffer.from(signer.privateKey.substring(2, 66), 'hex')
+  )
+  const { r, s, v } = signature
   const isYOdd = (v - BigInt(27)) % BigInt(2)
   const rPoint = ec.keyFromPublic(
     ec.curve.pointFromX(new BN(r), isYOdd).encode('hex'),
@@ -85,7 +97,7 @@ function inputsForMessage(signer: Wallet, message: string) {
   const U = ec.curve.g.mul(w)
 
   // T = r^-1 * R
-  const T = rPoint.getPublic().mul(rInv)
+  const T = rPoint.getPublic().mul(rInv) as ExtendedBasePoint
 
   const TPreComputes = getPointPreComputes(T)
 
