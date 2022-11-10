@@ -26,8 +26,8 @@ describe('ECDSAChecker circuit', function () {
       prepHash[i] = this.baseInputs.s[i]
       prepHash[k + i] = this.baseInputs.U[0][i]
       prepHash[2 * k + i] = this.baseInputs.U[1][i]
-      prepHash[3 * k + i] = pubKey[0][i] as never
-      prepHash[4 * k + i] = pubKey[1][i] as never
+      prepHash[3 * k + i] = pubKey[0][i] as unknown as number
+      prepHash[4 * k + i] = pubKey[1][i] as unknown as number
     }
 
     const inputs = [..._.flattenDeep(prepHash.filter((item) => item))].map(
