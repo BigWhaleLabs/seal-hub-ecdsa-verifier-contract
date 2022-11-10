@@ -36,15 +36,10 @@ template ECDSAChecker(k, n) {
   mimc7.k <== 0;
   for (var i = 0; i < k; i++) {
     mimc7.in[i] <== s[i];
-    log(s[i]);
     mimc7.in[k + i] <== U[0][i];
-    log(U[0][i]);
     mimc7.in[2 * k + i] <== U[1][i];
-    log(U[1][i]);
     mimc7.in[3 * k + i] <== pubKey[0][i];
-    log(pubKey[0][i]);
     mimc7.in[4 * k + i] <== pubKey[1][i];
-    log(pubKey[1][i]);
   }
 
   signal output commitment <== mimc7.out;

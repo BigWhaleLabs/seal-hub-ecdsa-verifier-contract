@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber, Wallet } from 'ethers'
 import { expect } from 'chai'
 import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
@@ -6,12 +6,12 @@ import _ from 'lodash'
 import getECDSAInputs, {
   publicKeyToArraysSplitted,
 } from '../utils/inputs/getECDSAInputs'
-import wallet from '../utils/wallet'
 
 describe('ECDSAChecker circuit', function () {
   before(async function () {
     this.circuit = await wasmTester('circuits/ECDSAChecker.circom')
-    this.baseInputs = await getECDSAInputs()
+    this.wallet = Wallet.createRandom()
+    this.baseInputs = await getECDSAInputs(this.wallet)
   })
   it.only('should generate the witness successfully and return correct mimc7', async function () {
     const witness = await this.circuit.calculateWitness(this.baseInputs)
@@ -20,7 +20,7 @@ describe('ECDSAChecker circuit', function () {
     const k = 4
     const prepHash: number[] = []
 
-    const pubKey = publicKeyToArraysSplitted(wallet.publicKey)
+    const pubKey = publicKeyToArraysSplitted(this.wallet.publicKey)
 
     for (let i = 0; i < k; i++) {
       prepHash[i] = this.baseInputs.s[i]
@@ -32,10 +32,6 @@ describe('ECDSAChecker circuit', function () {
     const inputs = _.flattenDeep(prepHash.filter((item) => item)).map((v) =>
       BigInt(v)
     )
-    console.log('---------------------')
-    inputs.forEach((e) => {
-      console.log(e)
-    })
 
     const mimc7 = await new Mimc7().prepare()
     const hash = mimc7.hash(inputs)
