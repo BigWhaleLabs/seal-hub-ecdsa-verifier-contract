@@ -1,5 +1,5 @@
-import { Wallet } from 'ethers'
-import { ecsign, hashPersonalMessage } from '@ethereumjs/util'
+import { Wallet, utils } from 'ethers'
+import { hashPersonalMessage } from '@ethereumjs/util'
 import BN from 'bn.js'
 import elliptic from 'elliptic'
 import wallet from '../wallet'
@@ -75,21 +75,23 @@ const getPointPreComputes = (point: ExtendedBasePoint) => {
   return gPowers
 }
 
-function inputsForMessage(signer: Wallet, message: string) {
+async function inputsForMessage(signer: Wallet, message: string) {
   const msgHash = hashPersonalMessage(Buffer.from(message))
-  const signature = ecsign(
-    msgHash,
-    Buffer.from(signer.privateKey.substring(2, 66), 'hex')
-  )
-  const { r, s, v } = signature
-  const isYOdd = (v - BigInt(27)) % BigInt(2)
+  const signature = await signer.signMessage(message)
+  const { v, r, s } = utils.splitSignature(signature)
+
+  const biV = BigInt(v)
+  const biR = new BN(r.slice(2, r.length), 'hex')
+  const hexS = s.slice(2, s.length)
+
+  const isYOdd = (biV - BigInt(27)) % BigInt(2)
   const rPoint = ec.keyFromPublic(
-    ec.curve.pointFromX(new BN(r), isYOdd).encode('hex'),
+    ec.curve.pointFromX(new BN(biR), isYOdd).encode('hex'),
     'hex'
   )
 
   // Get the group element: -(m * r^−1 * G)
-  const rInv = new BN(r).invm(SECP256K1_N)
+  const rInv = new BN(biR).invm(SECP256K1_N)
 
   // w = -(r^-1 * msg)
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
@@ -104,7 +106,7 @@ function inputsForMessage(signer: Wallet, message: string) {
   return {
     TPreComputes,
     U: [splitToRegisters(U.x), splitToRegisters(U.y)],
-    s: [splitToRegisters(Buffer.from(s).toString('hex'))],
+    s: [splitToRegisters(hexS)],
   }
 }
 
