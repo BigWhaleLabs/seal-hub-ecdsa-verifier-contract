@@ -9,7 +9,7 @@ describe('ECDSAChecker circuit', function () {
   before(async function () {
     this.circuit = await wasmTester('circuits/ECDSAChecker.circom')
     this.wallet = Wallet.createRandom()
-    this.baseInputs = getECDSAInputs(this.wallet)
+    this.baseInputs = await getECDSAInputs(this.wallet)
   })
   it('should generate the witness successfully and return correct mimc7', async function () {
     const witness = await this.circuit.calculateWitness(this.baseInputs)
