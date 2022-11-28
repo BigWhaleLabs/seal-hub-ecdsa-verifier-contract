@@ -11,3 +11,4 @@ pot
 input-*.json
 *verification_key.json
 public
+contracts/*Verifier.sol
