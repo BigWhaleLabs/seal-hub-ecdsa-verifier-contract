@@ -100,6 +100,7 @@ async function inputsForMessage(signer: Wallet, message: string) {
   const rInv = new BN(biR).invm(SECP256K1_N)
 
   // w = -(r^-1 * msg)
+  console.log('msgHash:', new BN(msgHash))
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
   // U = -(w * G) = -(r^-1 * msg * G)
   const U = ec.curve.g.mul(w)
