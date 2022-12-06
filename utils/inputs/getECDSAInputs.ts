@@ -76,12 +76,18 @@ const getPointPreComputes = (point: ExtendedBasePoint) => {
 }
 
 async function inputsForMessage(signer: Wallet, message: string) {
+  console.log(`Signing message: "${message}" with address: ${signer.address}`)
   const msgHash = hashPersonalMessage(Buffer.from(message))
   const signature = await signer.signMessage(message)
   const { v, r, s } = utils.splitSignature(signature)
+  console.log('sig:', signature)
+  console.log('v:', v)
+  console.log('r:', r)
+  console.log('s:', s)
 
   const biV = BigInt(v)
   const biR = new BN(r.slice(2, r.length), 'hex')
+  console.log('biR:', biR)
   const hexS = s.slice(2, s.length)
 
   const isYOdd = (biV - BigInt(27)) % BigInt(2)
@@ -99,6 +105,9 @@ async function inputsForMessage(signer: Wallet, message: string) {
   const U = ec.curve.g.mul(w)
 
   // T = r^-1 * R
+  // console.log(rPoint)
+  console.log('rInv:', rInv)
+  console.log('====')
   const T = rPoint.getPublic().mul(rInv) as ExtendedBasePoint
 
   const TPreComputes = getPointPreComputes(T)
@@ -111,5 +120,5 @@ async function inputsForMessage(signer: Wallet, message: string) {
 }
 
 export default function (signer = wallet) {
-  return inputsForMessage(signer, 'Signature for SealHub')
+  return inputsForMessage(signer, 'SealHub verification')
 }
