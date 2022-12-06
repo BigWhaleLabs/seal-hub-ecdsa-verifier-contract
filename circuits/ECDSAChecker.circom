@@ -1,6 +1,7 @@
 pragma circom 2.0.6;
 
 include "../efficient-zk-sig/ecdsa_verify.circom";
+include "../efficient-zk-sig/circom-ecdsa-circuits/zk-identity/eth.circom";
 include "../node_modules/circomlib/circuits/mimc.circom";
 
 template ECDSAChecker(k, n) {
@@ -31,16 +32,27 @@ template ECDSAChecker(k, n) {
     pubKey[1][i] <== verifySignature.pubKey[1][i];
   }
 
+  // Get address
+  component flattenPubkey = FlattenPubkey(n, k);
+  for (var i = 0; i < k; i++) {
+    flattenPubkey.chunkedPubkey[0][i] <== verifySignature.pubKey[0][i];
+    flattenPubkey.chunkedPubkey[1][i] <== verifySignature.pubKey[1][i];
+  }
+  component pubKeyToAddress = PubkeyToAddress();
+  for (var i = 0; i < 512; i++) {
+    pubKeyToAddress.pubkeyBits[i] <== flattenPubkey.pubkeyBits[i];
+  }
+  signal address <== pubKeyToAddress.address;
+
   // Hash message
-  component mimc7 = MultiMiMC7(k * 5, 91);
+  component mimc7 = MultiMiMC7(k * 3 + 1, 91);
   mimc7.k <== 0;
   for (var i = 0; i < k; i++) {
     mimc7.in[i] <== s[i];
     mimc7.in[k + i] <== U[0][i];
     mimc7.in[2 * k + i] <== U[1][i];
-    mimc7.in[3 * k + i] <== pubKey[0][i];
-    mimc7.in[4 * k + i] <== pubKey[1][i];
   }
+  mimc7.in[3 * k] <== address;
 
   signal output commitment <== mimc7.out;
 }

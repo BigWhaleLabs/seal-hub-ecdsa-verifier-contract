@@ -16,7 +16,7 @@ node "build/$1_js/generate_witness.js" "build/$1_js/$1.wasm" "inputs/input-$2.js
 
 # Generate zkey 0000
 starEcho "GENERATING ZKEY 0000"
-yarn snarkjs groth16 setup "build/$1.r1cs" pot/pot18_final.ptau "pot/$1_0000.zkey"
+yarn snarkjs groth16 setup "build/$1.r1cs" pot/pot19_final.ptau "pot/$1_0000.zkey"
 
 # Apply random beacon as before
 starEcho "GENERATING FINAL ZKEY"
@@ -25,7 +25,7 @@ yarn snarkjs zkey beacon "pot/$1_0000.zkey" "pot/$1_final.zkey" \
 
 # Optional: verify final zkey
 starEcho "VERIFYING FINAL ZKEY"
-yarn snarkjs zkey verify "build/$1.r1cs" pot/pot18_final.ptau "pot/$1_final.zkey"
+yarn snarkjs zkey verify "build/$1.r1cs" pot/pot19_final.ptau "pot/$1_final.zkey"
 
 # Export verification key
 starEcho "Exporting vkey"
