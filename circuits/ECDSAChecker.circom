@@ -44,7 +44,7 @@ template ECDSAChecker(k, n) {
   }
   signal address <== pubKeyToAddress.address;
 
-  // Hash message
+  // Generate commitment
   component mimc7 = MultiMiMC7(k * 3 + 1, 91);
   mimc7.k <== 0;
   for (var i = 0; i < k; i++) {
