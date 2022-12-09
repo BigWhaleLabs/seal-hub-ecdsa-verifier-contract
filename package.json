@@ -82,6 +82,6 @@
     "node": ">=8.3.0"
   },
   "dependencies": {
-    "@big-whale-labs/seal-hub-kit": "^0.0.8"
+    "@big-whale-labs/seal-hub-kit": "^0.0.10"
   }
 }
