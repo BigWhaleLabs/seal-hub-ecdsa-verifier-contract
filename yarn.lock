@@ -32,12 +32,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@big-whale-labs/constants@npm:^0.1.39":
+  version: 0.1.39
+  resolution: "@big-whale-labs/constants@npm:0.1.39"
+  checksum: 69807bda7e9ffb4561d1adb9fb62d34257b3099c1d52131adc55e4b10a859135200bc22ce8a80bce28a584ebba76e4c4f6254988415fbbddb8ad8cb20573b742
+  languageName: node
+  linkType: hard
+
+"@big-whale-labs/poseidon@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@big-whale-labs/poseidon@npm:0.0.5"
+  dependencies:
+    big-integer: ^1.6.51
+  checksum: 3603121e891d75ee42ab25ae53505bf307715a948c8cd63dadab0264c6aa9aea10832463faa84f60c3f143bf6d2072682edb145483f46ab6e234f481a1414c35
+  languageName: node
+  linkType: hard
+
+"@big-whale-labs/seal-hub-contract@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@big-whale-labs/seal-hub-contract@npm:0.1.0"
+  dependencies:
+    "@big-whale-labs/poseidon": ^0.0.5
+    "@big-whale-labs/versioned-contract": ^1.0.2
+    "@opengsn/contracts": 3.0.0-beta.1
+    "@zk-kit/incremental-merkle-tree.sol": ^1.3.1
+    circomlibjs: ^0.1.7
+  checksum: 3a453421868b796b5d6b59bffd6dd5b726bdff41d978fccd9579f72f960cfe721f877604b6eaa264e6990be7f1a7b396411fd7b42f3abe16ce4b22664ae6789d
+  languageName: node
+  linkType: hard
+
 "@big-whale-labs/seal-hub-ecdsa-verifier-contract@workspace:.":
   version: 0.0.0-use.local
   resolution: "@big-whale-labs/seal-hub-ecdsa-verifier-contract@workspace:."
   dependencies:
+    "@big-whale-labs/seal-hub-kit": ^0.0.7
     "@big-whale-labs/versioned-contract": ^1.0.2
-    "@ethereumjs/util": ^8.0.2
     "@ethersproject/providers": ^5.7.2
     "@nomiclabs/hardhat-ethers": ^2.2.1
     "@nomiclabs/hardhat-etherscan": ^3.1.2
@@ -50,14 +79,11 @@ __metadata:
     "@types/node": ^18.11.9
     "@typescript-eslint/eslint-plugin": ^5.45.0
     "@typescript-eslint/parser": ^5.45.0
-    bigint-conversion: ^2.3.0
-    bn.js: ^5.2.1
     chai: ^4.3.7
     circom_tester: ^0.0.19
     circomlib: ^2.0.5
     circomlibjs: ^0.1.7
     dotenv: ^16.0.3
-    elliptic: ^6.5.4
     envalid: ^7.3.1
     eslint: ^8.28.0
     eslint-config-prettier: ^8.5.0
@@ -84,6 +110,22 @@ __metadata:
     typescript: ^4.9.3
   languageName: unknown
   linkType: soft
+
+"@big-whale-labs/seal-hub-kit@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@big-whale-labs/seal-hub-kit@npm:0.0.7"
+  dependencies:
+    "@big-whale-labs/constants": ^0.1.39
+    "@big-whale-labs/seal-hub-contract": ^0.1.0
+    "@ethereumjs/util": ^8.0.2
+    "@zk-kit/incremental-merkle-tree": ^1.0.0
+    bn.js: ^5.2.1
+    circomlibjs: ^0.1.7
+    elliptic: ^6.5.4
+    ethers: ^5.7.2
+  checksum: 38cce2242d6e6102c4b5e0dcfa8d28446d1edb322cbd54d7c8bada42c238b77507953745a18766fef4d2cb00588a11411fa52b2d282e3512e7344add025587e8
+  languageName: node
+  linkType: hard
 
 "@big-whale-labs/versioned-contract@npm:^1.0.2":
   version: 1.0.2
@@ -1537,13 +1579,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@juanelas/base64@npm:^1.0.1":
-  version: 1.0.5
-  resolution: "@juanelas/base64@npm:1.0.5"
-  checksum: c207175bf7d7420609685e94df39f0f543a0d03b3ac7d394afdc682043703900c2d3b0cc6c4e11d30dad666230e5c49ffb1afb61aaed6b8d348048d02b165ce4
-  languageName: node
-  linkType: hard
-
 "@metamask/eth-sig-util@npm:^4.0.0":
   version: 4.0.1
   resolution: "@metamask/eth-sig-util@npm:4.0.1"
@@ -1958,7 +1993,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/contracts@npm:^4.8.0":
+"@opengsn/contracts@npm:3.0.0-beta.1":
+  version: 3.0.0-beta.1
+  resolution: "@opengsn/contracts@npm:3.0.0-beta.1"
+  dependencies:
+    "@openzeppelin/contracts": ^4.2.0
+  checksum: 2d7f897c00adfec0d9279a5fce8c07a13e81c35e2c1c205832eeed980e17221b6deef5e3f09ebadac7f5df0058b9232e7af29baf554490e9e86ed6e0074ff000
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/contracts@npm:^4.2.0, @openzeppelin/contracts@npm:^4.8.0":
   version: 4.8.0
   resolution: "@openzeppelin/contracts@npm:4.8.0"
   checksum: dfab51a7f91735cfb1e94dd5074736b0dac0207e4ebf26eb46b32defd3b67adce5a36b248daa7b841c21be74863c1e37cf92ed194a9c36d3f8c5326d1a24242a
@@ -2742,6 +2786,20 @@ __metadata:
   version: 1.1.0
   resolution: "@yarnpkg/lockfile@npm:1.1.0"
   checksum: 05b881b4866a3546861fee756e6d3812776ea47fa6eb7098f983d6d0eefa02e12b66c3fff931574120f196286a7ad4879ce02743c8bb2be36c6a576c7852083a
+  languageName: node
+  linkType: hard
+
+"@zk-kit/incremental-merkle-tree.sol@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@zk-kit/incremental-merkle-tree.sol@npm:1.3.1"
+  checksum: 8a9edd1490e5d2d5214573d633a15ce9db9b9574a2f961f7334973aa011308416fb8c67a3b9a9fee7135b33b05fef17dd2d9fc5560f6589d15edfb4b8ff6c46c
+  languageName: node
+  linkType: hard
+
+"@zk-kit/incremental-merkle-tree@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@zk-kit/incremental-merkle-tree@npm:1.0.0"
+  checksum: 2b5d7b5cc08cf3aea536d6541a1177221fcacca5b93fb22e37cd05926d138fe69035b73cb42e09798505caf1b7a75ad225027d13d35c2f0d7b216147cafd184e
   languageName: node
   linkType: hard
 
@@ -4138,19 +4196,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"big-integer@npm:^1.6.42, big-integer@npm:^1.6.48":
+"big-integer@npm:^1.6.42, big-integer@npm:^1.6.48, big-integer@npm:^1.6.51":
   version: 1.6.51
   resolution: "big-integer@npm:1.6.51"
   checksum: 3d444173d1b2e20747e2c175568bedeebd8315b0637ea95d75fd27830d3b8e8ba36c6af40374f36bdaea7b5de376dcada1b07587cb2a79a928fccdb6e6e3c518
-  languageName: node
-  linkType: hard
-
-"bigint-conversion@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "bigint-conversion@npm:2.3.0"
-  dependencies:
-    "@juanelas/base64": ^1.0.1
-  checksum: 02fe29c813cb86505508cc3e895fd315baa82b4672970048605bae1748f88ea8ebb057411639286f9f2443490c58a28b5bda84e02f0bb57d6d4b55761ea004e2
   languageName: node
   linkType: hard
 
