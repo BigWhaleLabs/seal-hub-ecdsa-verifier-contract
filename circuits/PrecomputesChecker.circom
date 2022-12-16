@@ -10,7 +10,6 @@ template PrecompCheckT(k, n) {
   signal input scalar[k]; 
   signal input pointPreComputes[32][256][2][4]; 
   signal input precomp[2][k]; // input precomputed value
-  signal input precompHash; // hash of the precomputed value
 
   signal mul[2][k]; 
 
@@ -42,32 +41,35 @@ template PrecompCheckT(k, n) {
     compare[i] = IsEqual();
     compare[i].in[0] <== precomp[0][i];
     compare[i].in[1] <== mul[0][i];
-    compare[i].out === 1;
+    log("x");
+    log(precomp[0][i]);
+    log(mul[0][i]);
+    // compare[i].out === 1;
 
     compare[i + k] = IsEqual();
     compare[i + k].in[0] <== precomp[1][i];
     compare[i + k].in[1] <== mul[1][i];
-    compare[i + k].out === 1;
+    log("y");
+    log(precomp[1][i]);
+    log(mul[1][i]);
+    // compare[i + k].out === 1;
   }
 
   component mimc7 = MultiMiMC7(2*k, 91);
   mimc7.k <== 0;
-  signal hash;
 
   for (var i = 0; i < k; i++){
     mimc7.in[i] <== mul[0][i];
     mimc7.in[k+i] <== mul[1][i];
   }
 
-  hash <== mimc7.out;
-  hash === precompHash;
+  signal output hash <== mimc7.out;
 }
 
 // check if scalar*groupPoint = precomp for precomputed U = r^{-1}*m*G, and hash(scalar*groupPoint) = hash(precomp)
 template PrecompCheckU(k, n) {
   signal input scalar[k]; // r^{-1}*m is the scalar
   signal input precomp[2][k]; // input precomputed value
-  signal input precompHash; // hash of the precomputed value
 
   signal mul[2][k]; 
 
@@ -99,30 +101,22 @@ template PrecompCheckU(k, n) {
 
   component mimc7 = MultiMiMC7(2*k, 91);
   mimc7.k <== 0;
-  signal hash;
 
   for (var i = 0; i < k; i++){
     mimc7.in[i] <== mul[0][i];
     mimc7.in[k+i] <== mul[1][i];
   }
 
-  hash <== mimc7.out;
-  hash === precompHash;
+  signal output hash <== mimc7.out;
 }
 
-template PrecompCheckCombined(k, n){
-
+template PrecomputesChecker(k, n){
+  // Check T precomputes
   signal input scalarForT[k]; 
   signal input pointPreComputesForT[32][256][2][4]; 
-  signal input precompForT[2][k]; // input precomputed value
-  signal input precompHashForT; // hash of the precomputed value
-
-  signal input scalarForU[k]; // r^{-1}*m is the scalar
-  signal input precompForU[2][k]; // input precomputed value
-  signal input precompHashForU; // hash of the precomputed value
+  signal input precompForT[2][k];
 
   component checkT = PrecompCheckT(k, n); // load T vals
-
   for (var i = 0; i < 32; i++) {
     for (var j = 0; j < 256; j++) {
       for (var l = 0; l < 2; l++) {
@@ -132,24 +126,26 @@ template PrecompCheckCombined(k, n){
       }
     }
   }
-
   for (var i = 0; i < k; i++){
     checkT.scalar[i] <== scalarForT[i];
     checkT.precomp[0][i] <== precompForT[0][i];
     checkT.precomp[1][i] <== precompForT[1][i];
   }
 
-  checkT.precompHash <== precompHashForT;
+  signal output hashT <== checkT.hash;
+
+  // Check U precomputes
+  signal input scalarForU[k]; // r^{-1}*m is the scalar
+  signal input precompForU[2][k]; // input precomputed value
 
   component checkU = PrecompCheckU(k, n); // load U vals
-
   for (var i = 0; i < k; i++){
     checkU.scalar[i] <== scalarForU[i];
     checkU.precomp[0][i] <== precompForU[0][i];
     checkU.precomp[1][i] <== precompForU[1][i];
   }
 
-  checkU.precompHash <== precompHashForU;
+  signal output hashU <== checkU.hash;
 }
 
-component main = PrecompCheckCombined(4, 64);
+component main = PrecomputesChecker(4, 64);

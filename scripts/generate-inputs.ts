@@ -2,6 +2,7 @@ import { cwd } from 'process'
 import { resolve } from 'path'
 import { writeFileSync } from 'fs'
 import getECDSAInputs from '../utils/inputs/getECDSAInputs'
+import getPrecomputesInputs from '../utils/inputs/getPrecomputesInputs'
 import wallet from '../utils/wallet'
 
 void (async () => {
@@ -9,7 +10,8 @@ void (async () => {
   console.log('ECDSA public key', wallet.publicKey)
   console.log('ECDSA address', wallet.address)
   const inputs = {
-    ecdsa: getECDSAInputs,
+    // ecdsa: getECDSAInputs,
+    precomputes: getPrecomputesInputs,
   }
   for (const [name, fn] of Object.entries(inputs)) {
     const inputs = await fn()
