@@ -104,9 +104,12 @@ async function inputsForMessage(signer: Wallet, message: string) {
 
   return {
     pointPreComputesForT: TPreComputes,
-    scalarForT: splitToRegisters(rInv),
+    scalarForT: splitToRegisters(biR),
     scalarForU: splitToRegisters(w),
-    precompForT: [splitToRegisters(T.x), splitToRegisters(T.y)],
+    precompForT: [
+      splitToRegisters(rPoint.getPublic().x),
+      splitToRegisters(rPoint.getPublic().y),
+    ],
     precompForU: [splitToRegisters(U.x), splitToRegisters(U.y)],
   }
 }

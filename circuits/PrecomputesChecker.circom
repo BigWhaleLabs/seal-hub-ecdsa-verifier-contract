@@ -41,18 +41,12 @@ template PrecompCheckT(k, n) {
     compare[i] = IsEqual();
     compare[i].in[0] <== precomp[0][i];
     compare[i].in[1] <== mul[0][i];
-    log("x");
-    log(precomp[0][i]);
-    log(mul[0][i]);
-    // compare[i].out === 1;
+    compare[i].out === 1;
 
     compare[i + k] = IsEqual();
     compare[i + k].in[0] <== precomp[1][i];
     compare[i + k].in[1] <== mul[1][i];
-    log("y");
-    log(precomp[1][i]);
-    log(mul[1][i]);
-    // compare[i + k].out === 1;
+    compare[i + k].out === 1;
   }
 
   component mimc7 = MultiMiMC7(2*k, 91);
