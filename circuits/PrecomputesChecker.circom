@@ -5,16 +5,15 @@ include "../efficient-zk-sig/secp256k1_scalar_mult_cached_windowed.circom";
 include "../node_modules/circomlib/circuits/mimc.circom";
 include "../efficient-zk-sig/circom-ecdsa-circuits/ecdsa.circom";
 
-// check if scalar*groupPoint = precomp for precomputed T = r^{-1}*R, and hash(scalar*groupPoint) = hash(precomp)
+// Check if scalar * groupPoint = precomp for precomputed T = r^{-1} * R, and hash(scalar * groupPoint) = hash(precomp)
 template PrecompCheckT(k, n) {
-  signal input scalar[k]; 
-  signal input pointPreComputes[32][256][2][4]; 
-  signal input precomp[2][k]; // input precomputed value
+  signal input scalar[k];
+  signal input pointPreComputes[32][256][2][4];
+  signal input precomp[2][k];
 
-  signal mul[2][k]; 
+  signal mul[2][k];
 
-  component scalarMul;
-  scalarMul = Secp256K1ScalarMultCachedWindowed(n, k);
+  component scalarMul = Secp256K1ScalarMultCachedWindowed(n, k);
 
   for (var i = 0; i < 32; i++) {
     for (var j = 0; j < 256; j++) {
@@ -31,11 +30,12 @@ template PrecompCheckT(k, n) {
   }
 
   for (var i = 0; i < k; i++){
-    mul[0][i]<==scalarMul.out[0][i];
-    mul[1][i]<==scalarMul.out[1][i];
+    mul[0][i] <== scalarMul.out[0][i];
+    mul[1][i] <== scalarMul.out[1][i];
   }
   
-  component compare[2*k]; // to compare mul and precomp
+   // Compare mul and precomp
+  component compare[2 * k];
 
   for (var i = 0; i < k; i++){
     compare[i] = IsEqual();
@@ -49,37 +49,37 @@ template PrecompCheckT(k, n) {
     compare[i + k].out === 1;
   }
 
-  component mimc7 = MultiMiMC7(2*k, 91);
+  // Export hash of mul
+  component mimc7 = MultiMiMC7(2 * k, 91);
   mimc7.k <== 0;
-
   for (var i = 0; i < k; i++){
     mimc7.in[i] <== mul[0][i];
-    mimc7.in[k+i] <== mul[1][i];
+    mimc7.in[k + i] <== mul[1][i];
   }
-
   signal output hash <== mimc7.out;
 }
 
-// check if scalar*groupPoint = precomp for precomputed U = r^{-1}*m*G, and hash(scalar*groupPoint) = hash(precomp)
+// Check if scalar * groupPoint = precomp for precomputed U = r^{-1} * m * G,
+// and hash(scalar * groupPoint) = hash(precomp)
 template PrecompCheckU(k, n) {
-  signal input scalar[k]; // r^{-1}*m is the scalar
-  signal input precomp[2][k]; // input precomputed value
+  signal input scalar[k]; // r^{-1} * m is the scalar
+  signal input precomp[2][k];
 
-  signal mul[2][k]; 
+  signal mul[2][k];
 
-  component scalarMul;
-  scalarMul = ECDSAPrivToPub(n, k); // computes scalar*G (using cached multiples)
+  component scalarMul = ECDSAPrivToPub(n, k); // computes scalar * G (using cached multiples)
 
   for (var i = 0; i < k; i++){
     scalarMul.privkey[i] <== scalar[i];
   }
 
   for (var i = 0; i < k; i++){
-    mul[0][i]<==scalarMul.pubkey[0][i];
-    mul[1][i]<==scalarMul.pubkey[1][i];
+    mul[0][i] <== scalarMul.pubkey[0][i];
+    mul[1][i] <== scalarMul.pubkey[1][i];
   }
   
-  component compare[2*k]; // to compare mul and precomp
+  // Compare mul and precomp
+  component compare[2 * k];
 
   for (var i = 0; i < k; i++){
     compare[i] = IsEqual();
@@ -93,12 +93,13 @@ template PrecompCheckU(k, n) {
     compare[i + k].out === 1;
   }
 
-  component mimc7 = MultiMiMC7(2*k, 91);
+  // Export hash of mul
+  component mimc7 = MultiMiMC7(2 * k, 91);
   mimc7.k <== 0;
 
   for (var i = 0; i < k; i++){
     mimc7.in[i] <== mul[0][i];
-    mimc7.in[k+i] <== mul[1][i];
+    mimc7.in[k + i] <== mul[1][i];
   }
 
   signal output hash <== mimc7.out;
@@ -106,11 +107,11 @@ template PrecompCheckU(k, n) {
 
 template PrecomputesChecker(k, n){
   // Check T precomputes
-  signal input scalarForT[k]; 
-  signal input pointPreComputesForT[32][256][2][4]; 
+  signal input scalarForT[k];
+  signal input pointPreComputesForT[32][256][2][4];
   signal input precompForT[2][k];
 
-  component checkT = PrecompCheckT(k, n); // load T vals
+  component checkT = PrecompCheckT(k, n);
   for (var i = 0; i < 32; i++) {
     for (var j = 0; j < 256; j++) {
       for (var l = 0; l < 2; l++) {
@@ -125,20 +126,20 @@ template PrecomputesChecker(k, n){
     checkT.precomp[0][i] <== precompForT[0][i];
     checkT.precomp[1][i] <== precompForT[1][i];
   }
-
+  // Export hash
   signal output hashT <== checkT.hash;
 
   // Check U precomputes
-  signal input scalarForU[k]; // r^{-1}*m is the scalar
-  signal input precompForU[2][k]; // input precomputed value
+  signal input scalarForU[k]; // r^{-1} * m is the scalar
+  signal input precompForU[2][k];
 
-  component checkU = PrecompCheckU(k, n); // load U vals
+  component checkU = PrecompCheckU(k, n);
   for (var i = 0; i < k; i++){
     checkU.scalar[i] <== scalarForU[i];
     checkU.precomp[0][i] <== precompForU[0][i];
     checkU.precomp[1][i] <== precompForU[1][i];
   }
-
+  // Export hash
   signal output hashU <== checkU.hash;
 }
 
