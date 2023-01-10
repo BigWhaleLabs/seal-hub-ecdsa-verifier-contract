@@ -35,5 +35,5 @@ Also check out the `.env.example` file for more information.
 - `yarn lint` — runs all the linters
 - `yarn prettify` — prettifies the code in th project
 - `yarn release` — relases the `typechain` directory to NPM
-- `yarn download-ptau` — downloads the relevant ptau file
+- `yarn download-ptau-{n}` — downloads the relevant ptau file
 - `yarn download-public` — downloads the relevant public binary files
