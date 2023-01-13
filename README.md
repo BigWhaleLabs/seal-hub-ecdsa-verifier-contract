@@ -9,7 +9,7 @@ Verifies that a signature is a valid ECDSA signature and outputs the hash of tha
 3. Download the ptau file with `yarn download-ptau`
 4. Add environment variables to your `.env` file
 5. Run `yarn generate-inputs` to generate random circuit inputs
-6. Run `yarn compile` to compile the circom circuit, create proof, verify proof, export verifier as a solidity file `ECDSACheckerVerifier.sol`
+6. Run `yarn compile` to compile the circom circuit, create proof, verify proof, export verifiers as a solidity files
 7. Run `yarn test` to run the test suits
 8. Use the artifacts from the `public` folder in [snarkjs](https://github.com/iden3/snarkjs)
 9. Run `yarn deploy` to deploy the verifier smart contract to blockchain

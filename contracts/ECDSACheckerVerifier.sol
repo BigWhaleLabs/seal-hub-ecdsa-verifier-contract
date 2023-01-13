@@ -15,7 +15,7 @@ pragma solidity ^0.8.17;
 
 import "@big-whale-labs/versioned-contract/contracts/Versioned.sol";
 
-library Pairing {
+library ECDSACheckerPairing {
   struct G1Point {
     uint X;
     uint Y;
@@ -220,27 +220,27 @@ library Pairing {
 contract ECDSACheckerVerifier is Versioned {
   constructor(string memory _version) Versioned(_version) {}
 
-  using Pairing for *;
+  using ECDSACheckerPairing for *;
   struct VerifyingKey {
-    Pairing.G1Point alfa1;
-    Pairing.G2Point beta2;
-    Pairing.G2Point gamma2;
-    Pairing.G2Point delta2;
-    Pairing.G1Point[] IC;
+    ECDSACheckerPairing.G1Point alfa1;
+    ECDSACheckerPairing.G2Point beta2;
+    ECDSACheckerPairing.G2Point gamma2;
+    ECDSACheckerPairing.G2Point delta2;
+    ECDSACheckerPairing.G1Point[] IC;
   }
   struct Proof {
-    Pairing.G1Point A;
-    Pairing.G2Point B;
-    Pairing.G1Point C;
+    ECDSACheckerPairing.G1Point A;
+    ECDSACheckerPairing.G2Point B;
+    ECDSACheckerPairing.G1Point C;
   }
 
   function verifyingKey() internal pure returns (VerifyingKey memory vk) {
-    vk.alfa1 = Pairing.G1Point(
+    vk.alfa1 = ECDSACheckerPairing.G1Point(
       20491192805390485299153009773594534940189261866228447918068658471970481763042,
       9383485363053290200918347156157836566562967994039712273449902621266178545958
     );
 
-    vk.beta2 = Pairing.G2Point(
+    vk.beta2 = ECDSACheckerPairing.G2Point(
       [
         4252822878758300859123897981450591353533073413197771768651442665752259397132,
         6375614351688725206403948262868962793625744043794305715222011528459656738731
@@ -250,7 +250,7 @@ contract ECDSACheckerVerifier is Versioned {
         10505242626370262277552901082094356697409835680220590971873171140371331206856
       ]
     );
-    vk.gamma2 = Pairing.G2Point(
+    vk.gamma2 = ECDSACheckerPairing.G2Point(
       [
         11559732032986387107991004021392285783925812861821192530917403151452391805634,
         10857046999023057135944570762232829481370756359578518086990519993285655852781
@@ -260,7 +260,7 @@ contract ECDSACheckerVerifier is Versioned {
         8495653923123431417604973247489272438418190587263600148770280649306958101930
       ]
     );
-    vk.delta2 = Pairing.G2Point(
+    vk.delta2 = ECDSACheckerPairing.G2Point(
       [
         12599857379517512478445603412764121041984228075771497593287716170335433683702,
         7912208710313447447762395792098481825752520616755888860068004689933335666613
@@ -270,19 +270,19 @@ contract ECDSACheckerVerifier is Versioned {
         21679208693936337484429571887537508926366191105267550375038502782696042114705
       ]
     );
-    vk.IC = new Pairing.G1Point[](3);
+    vk.IC = new ECDSACheckerPairing.G1Point[](3);
 
-    vk.IC[0] = Pairing.G1Point(
+    vk.IC[0] = ECDSACheckerPairing.G1Point(
       21253682901818076113642514155602023101881722260729600275584902818828591307091,
       14553183634295744059484066812743419579398782232998013972650864499206046756087
     );
 
-    vk.IC[1] = Pairing.G1Point(
+    vk.IC[1] = ECDSACheckerPairing.G1Point(
       7531563583516129427794915367679945146196605891307035593651814608124638940562,
       20325327238872257118250366384426889083331307919876032650521721514796953348437
     );
 
-    vk.IC[2] = Pairing.G1Point(
+    vk.IC[2] = ECDSACheckerPairing.G1Point(
       15033813658541173403799457925850260105522618090619046927175811918003795172038,
       16755399853601553587822843092255326292383915373629119520343846318640656617112
     );
@@ -297,15 +297,18 @@ contract ECDSACheckerVerifier is Versioned {
     VerifyingKey memory vk = verifyingKey();
     require(input.length + 1 == vk.IC.length, "verifier-bad-input");
     // Compute the linear combination vk_x
-    Pairing.G1Point memory vk_x = Pairing.G1Point(0, 0);
+    ECDSACheckerPairing.G1Point memory vk_x = ECDSACheckerPairing.G1Point(0, 0);
     for (uint i = 0; i < input.length; i++) {
       require(input[i] < snark_scalar_field, "verifier-gte-snark-scalar-field");
-      vk_x = Pairing.addition(vk_x, Pairing.scalar_mul(vk.IC[i + 1], input[i]));
+      vk_x = ECDSACheckerPairing.addition(
+        vk_x,
+        ECDSACheckerPairing.scalar_mul(vk.IC[i + 1], input[i])
+      );
     }
-    vk_x = Pairing.addition(vk_x, vk.IC[0]);
+    vk_x = ECDSACheckerPairing.addition(vk_x, vk.IC[0]);
     if (
-      !Pairing.pairingProd4(
-        Pairing.negate(proof.A),
+      !ECDSACheckerPairing.pairingProd4(
+        ECDSACheckerPairing.negate(proof.A),
         proof.B,
         vk.alfa1,
         vk.beta2,
@@ -326,9 +329,12 @@ contract ECDSACheckerVerifier is Versioned {
     uint[2] memory input
   ) public view returns (bool r) {
     Proof memory proof;
-    proof.A = Pairing.G1Point(a[0], a[1]);
-    proof.B = Pairing.G2Point([b[0][0], b[0][1]], [b[1][0], b[1][1]]);
-    proof.C = Pairing.G1Point(c[0], c[1]);
+    proof.A = ECDSACheckerPairing.G1Point(a[0], a[1]);
+    proof.B = ECDSACheckerPairing.G2Point(
+      [b[0][0], b[0][1]],
+      [b[1][0], b[1][1]]
+    );
+    proof.C = ECDSACheckerPairing.G1Point(c[0], c[1]);
     uint[] memory inputValues = new uint[](input.length);
     for (uint i = 0; i < input.length; i++) {
       inputValues[i] = input[i];
