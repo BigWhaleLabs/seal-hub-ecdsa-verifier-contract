@@ -5,9 +5,9 @@ import Mimc7 from '../utils/Mimc7'
 import buildInputs from '../utils/buildInputs'
 import getECDSAInputs from '../utils/inputs/getECDSAInputs'
 
-describe('ECDSAChecker circuit', function () {
+describe('PrecomputesChecker circuit', function () {
   before(async function () {
-    this.circuit = await wasmTester('circuits/ECDSAChecker.circom')
+    this.circuit = await wasmTester('circuits/PrecomputesChecker.circom')
     this.wallet = Wallet.createRandom()
     this.baseInputs = await getECDSAInputs(this.wallet)
   })
