@@ -1,6 +1,6 @@
 {
   "name": "@big-whale-labs/seal-hub-ecdsa-verifier-contract",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SealHub ECDSA verifier contract",
   "repository": {
     "type": "git",
