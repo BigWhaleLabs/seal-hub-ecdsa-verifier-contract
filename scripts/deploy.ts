@@ -1,7 +1,4 @@
-import { cwd } from 'process'
 import { ethers, run } from 'hardhat'
-import { readdirSync } from 'fs'
-import { resolve } from 'path'
 import { utils } from 'ethers'
 import { version } from '../package.json'
 
@@ -22,13 +19,20 @@ async function main() {
     5: 'goerli',
   } as { [chainId: number]: string }
   const chainName = chains[chainId]
-  const contractNames = readdirSync(resolve(cwd(), 'contracts')).map((s) =>
-    s.substring(0, s.length - 4)
-  )
+  const contractNames = [
+    'ECDSACheckerVerifier',
+    'UPrecomputesCheckerVerifier',
+    'CompleteECDSACheckerVerifier',
+  ]
+  const contractAddresses = [] as string[]
   for (const verifierContractName of contractNames) {
     console.log(`Deploying ${verifierContractName}...`)
     const Verifier = await ethers.getContractFactory(verifierContractName)
-    const verifier = await Verifier.deploy(version)
+    const constructorArguments =
+      verifierContractName === 'CompleteECDSACheckerVerifier'
+        ? [version, contractAddresses[0], contractAddresses[1]]
+        : [version]
+    const verifier = await Verifier.deploy(...constructorArguments)
     console.log(
       'Deploy tx gas price:',
       utils.formatEther(verifier.deployTransaction.gasPrice || 0)
@@ -39,6 +43,7 @@ async function main() {
     )
     await verifier.deployed()
     const address = verifier.address
+    contractAddresses.push(address)
     console.log('Contract deployed to:', address)
     console.log('Wait for 1 minute to make sure blockchain is updated')
     await new Promise((resolve) => setTimeout(resolve, 60 * 1000))
@@ -46,7 +51,7 @@ async function main() {
     try {
       await run('verify:verify', {
         address,
-        constructorArguments: [version],
+        constructorArguments,
       })
     } catch (err) {
       console.log(
