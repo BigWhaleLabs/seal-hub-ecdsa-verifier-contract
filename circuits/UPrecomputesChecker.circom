@@ -7,14 +7,14 @@ include "../node_modules/circomlib/circuits/mimc.circom";
 
 // Check if scalar * groupPoint = precomp for precomputed U = r^{-1} * m * G, and hash(scalar * groupPoint) = hash(precomp)
 template UPrecomputesChecker(k, n) {
-  signal input scalar[k]; // r^{-1} * m is the scalar
-  signal input precomp[2][k]; // input precomputed value
+  signal input scalarForU[k]; // r^{-1} * m is the scalar
+  signal input U[2][k]; // input precomputed value
 
   // Populate scalarMul
   component scalarMul = ECDSAPrivToPub(n, k); // computes scalar * G (using cached multiples)
 
   for (var i = 0; i < k; i++){
-    scalarMul.privkey[i] <== scalar[i];
+    scalarMul.privkey[i] <== scalarForU[i];
   }
   // Populate mul
   signal mul[2][k]; 
@@ -28,12 +28,12 @@ template UPrecomputesChecker(k, n) {
 
   for (var i = 0; i < k; i++){
     compare[i] = IsEqual();
-    compare[i].in[0] <== precomp[0][i];
+    compare[i].in[0] <== U[0][i];
     compare[i].in[1] <== mul[0][i];
     compare[i].out === 1;
 
     compare[i + k] = IsEqual();
-    compare[i + k].in[0] <== precomp[1][i];
+    compare[i + k].in[0] <== U[1][i];
     compare[i + k].in[1] <== mul[1][i];
     compare[i + k].out === 1;
   }

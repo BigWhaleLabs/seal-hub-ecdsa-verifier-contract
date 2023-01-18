@@ -7,9 +7,9 @@ include "../../node_modules/circomlib/circuits/mimc.circom";
 
 // Сheck if scalar * groupPoint = expected val for group pt T = r^{-1} * R, scalar = r, expected val = R
 template TPrecomputesChecker(k, n) {
-  signal input scalar[k]; // r
-  signal input pointPreComputes[32][256][2][4]; 
-  signal input precomp[2][k]; // input precomputed value R
+  signal input scalarForT[k]; // r
+  signal input TPrecomputes[32][256][2][4]; 
+  signal input T[2][k]; // input precomputed value R
   // Populate scalarMul
   component scalarMul = Secp256K1ScalarMultCachedWindowed(n, k);
 
@@ -17,13 +17,13 @@ template TPrecomputesChecker(k, n) {
     for (var j = 0; j < 256; j++) {
       for (var l = 0; l < 2; l++) {
         for (var m = 0; m < 4; m++) {
-          scalarMul.pointPreComputes[i][j][l][m] <== pointPreComputes[i][j][l][m];
+          scalarMul.pointPreComputes[i][j][l][m] <== TPrecomputes[i][j][l][m];
         }
       }
     }
   }
   for (var i = 0; i < k; i++){
-    scalarMul.scalar[i] <== scalar[i];
+    scalarMul.scalar[i] <== scalarForT[i];
   }
   // Populate mul
   signal mul[2][k];
@@ -37,12 +37,12 @@ template TPrecomputesChecker(k, n) {
 
   for (var i = 0; i < k; i++){
     compare[i] = IsEqual();
-    compare[i].in[0] <== precomp[0][i];
+    compare[i].in[0] <== T[0][i];
     compare[i].in[1] <== mul[0][i];
     compare[i].out === 1;
 
     compare[i + k] = IsEqual();
-    compare[i + k].in[0] <== precomp[1][i];
+    compare[i + k].in[0] <== T[1][i];
     compare[i + k].in[1] <== mul[1][i];
     compare[i + k].out === 1;
   }

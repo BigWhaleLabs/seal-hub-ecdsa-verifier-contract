@@ -8,7 +8,7 @@ include "./templates/TPrecomputesChecker.circom";
 template ECDSAChecker(k, n) {
   // Verify ECDSA signature
   signal input s[k];
-  signal input TPreComputes[32][256][2][4];
+  signal input TPrecomputes[32][256][2][4];
   signal input U[2][k];
 
   component verifySignature = ECDSAVerify(n, k);
@@ -22,27 +22,27 @@ template ECDSAChecker(k, n) {
     for (var j = 0; j < 256; j++) {
       for (var l = 0; l < 2; l++) {
         for (var m = 0; m < 4; m++) {
-          verifySignature.TPreComputes[i][j][l][m] <== TPreComputes[i][j][l][m];
+          verifySignature.TPreComputes[i][j][l][m] <== TPrecomputes[i][j][l][m];
         }
       }
     }
   }
   // Verify TPrecomputes
   signal input scalarForT[k]; // r value
-  signal input precompForT[2][k]; // input R: expected val for checkT r * T = R
+  signal input T[2][k]; // input R: expected val for checkT r * T = R
 
   component tPrecomputesChecker = TPrecomputesChecker(k, n); // load T vals
 
   for (var i = 0; i < k; i++) {
-    tPrecomputesChecker.scalar[i] <== scalarForT[i];
-    tPrecomputesChecker.precomp[0][i] <== precompForT[0][i];
-    tPrecomputesChecker.precomp[1][i] <== precompForT[1][i];
+    tPrecomputesChecker.scalarForT[i] <== scalarForT[i];
+    tPrecomputesChecker.T[0][i] <== T[0][i];
+    tPrecomputesChecker.T[1][i] <== T[1][i];
   }
   for (var i = 0; i < 32; i++) {
     for (var j = 0; j < 256; j++) {
       for (var l = 0; l < 2; l++) {
         for (var m = 0; m < 4; m++) {
-          tPrecomputesChecker.pointPreComputes[i][j][l][m] <== TPreComputes[i][j][l][m];
+          tPrecomputesChecker.TPrecomputes[i][j][l][m] <== TPrecomputes[i][j][l][m];
         }
       }
     }
