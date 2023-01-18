@@ -65,7 +65,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@big-whale-labs/seal-hub-ecdsa-verifier-contract@workspace:."
   dependencies:
-    "@big-whale-labs/seal-hub-kit": ^0.0.17
+    "@big-whale-labs/seal-hub-kit": ^0.0.18
     "@big-whale-labs/versioned-contract": ^1.0.2
     "@ethereumjs/util": ^8.0.3
     "@ethersproject/providers": ^5.7.2
@@ -104,7 +104,7 @@ __metadata:
     prettier: ^2.8.3
     prettier-plugin-solidity: ^1.1.1
     snarkjs: ^0.5.0
-    solhint: ^3.3.7
+    solhint: ^3.3.8
     solidity-coverage: ^0.8.2
     ts-node: ^10.9.1
     typechain: ^8.1.1
@@ -112,9 +112,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@big-whale-labs/seal-hub-kit@npm:^0.0.17":
-  version: 0.0.17
-  resolution: "@big-whale-labs/seal-hub-kit@npm:0.0.17"
+"@big-whale-labs/seal-hub-kit@npm:^0.0.18":
+  version: 0.0.18
+  resolution: "@big-whale-labs/seal-hub-kit@npm:0.0.18"
   dependencies:
     "@big-whale-labs/constants": ^0.1.39
     "@big-whale-labs/seal-hub-contract": ^0.0.6
@@ -124,7 +124,7 @@ __metadata:
     circomlibjs: ^0.1.7
     elliptic: ^6.5.4
     ethers: ^5.7.2
-  checksum: d7205059bdde994b8384881e91f191a27b8cda2362f0840b5d8618df28a1ab2058029c42ffa3cfee83ca1d5a0e6561a3fabc5c4d1a032276dded92007810309a
+  checksum: 6a93ad17f0b1b96fac7abde3eb3c057b1d3851ae7f87abb25ab72728445da58622b5ad7d136d103f21b4951b5a9d1977f5658c6a825358b678f2e3e6a0d55bc6
   languageName: node
   linkType: hard
 
@@ -13671,11 +13671,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solhint@npm:^3.3.7":
-  version: 3.3.7
-  resolution: "solhint@npm:3.3.7"
+"solhint@npm:^3.3.8":
+  version: 3.3.8
+  resolution: "solhint@npm:3.3.8"
   dependencies:
-    "@solidity-parser/parser": ^0.14.1
+    "@solidity-parser/parser": ^0.14.5
     ajv: ^6.6.1
     antlr4: 4.7.1
     ast-parents: 0.0.1
@@ -13695,7 +13695,7 @@ __metadata:
       optional: true
   bin:
     solhint: solhint.js
-  checksum: 140a4660b691ea78aa7de19aca2123991fb4f9bc7be574e1573ae428b356e12919805df56c2892ddbdd031a4a4db477a81425ad85aac6672f3fb73f4887c2abb
+  checksum: 305434ecfbb5fd378dbce7b5027dffd06b55023022a70572f449d0d0393e0e0ab56503c2dd6afd450aa9b42b5782692f4781665c15bd335d7568a0eddc7cf19a
   languageName: node
   linkType: hard
 
