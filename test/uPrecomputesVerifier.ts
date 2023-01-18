@@ -1,15 +1,17 @@
-import { ECDSAProofStruct } from '../typechain/contracts/CompleteECDSACheckerVerifier'
+import { UPrecomputesProofStruct } from '../typechain/contracts/CompleteECDSACheckerVerifier'
 import { ethers } from 'hardhat'
 import { expect } from 'chai'
 import { version } from '../package.json'
 import getSolidityCallProof from '../utils/getSolidityCallProof'
 
-describe('ECDSACheckerVerifier contract', function () {
+describe('UPrecomputesCheckerVerifier contract', function () {
   before(async function () {
-    const factory = await ethers.getContractFactory('ECDSACheckerVerifier')
+    const factory = await ethers.getContractFactory(
+      'UPrecomputesCheckerVerifier'
+    )
     this.contract = await factory.deploy(version)
     await this.contract.deployed()
-    this.proof = await getSolidityCallProof('ecdsa')
+    this.proof = await getSolidityCallProof('u-precomputes')
   })
   describe('Constructor', function () {
     it('should deploy the contract with the correct fields', async function () {
@@ -29,7 +31,7 @@ describe('ECDSACheckerVerifier contract', function () {
         '0x184b074c1fac82c2dda436071d098edb4a2955343721ef642e6b844e40a50cc0',
         '0x1e11078629c2031c0eb203d84f745e423440ed52091d06ece6020cd5674fda5f',
       ],
-    } as ECDSAProofStruct
+    } as UPrecomputesProofStruct
 
     expect(await this.contract.verifyProof(a, b, c, input)).to.be.equal(false)
   })
