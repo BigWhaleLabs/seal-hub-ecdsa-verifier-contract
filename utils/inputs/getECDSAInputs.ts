@@ -1,6 +1,6 @@
 import { Wallet } from 'ethers'
 import {
-  getMessageForAddress,
+  getMessage,
   getTPrecomputesFromSignature,
   getUAndSFromSignature,
 } from '@big-whale-labs/seal-hub-kit'
@@ -21,6 +21,6 @@ async function inputsForMessage(signer: Wallet, message: string) {
   }
 }
 
-export default function (signer = wallet) {
-  return inputsForMessage(signer, getMessageForAddress(signer.address))
+export default function (signer = wallet, message = getMessage()) {
+  return inputsForMessage(signer, message)
 }

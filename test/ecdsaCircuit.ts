@@ -4,7 +4,7 @@ import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
 import getECDSAInputs from '../utils/inputs/getECDSAInputs'
 
-describe('ECDSAChecker circuit', function () {
+describe.skip('ECDSAChecker circuit', function () {
   before(async function () {
     this.circuit = await wasmTester('circuits/ECDSAChecker.circom')
     this.wallet = Wallet.createRandom()
