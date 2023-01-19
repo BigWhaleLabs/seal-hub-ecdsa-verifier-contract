@@ -10,7 +10,7 @@ describe('UPrecomputesChecker circuit', function () {
     this.wallet = Wallet.createRandom()
     this.baseInputs = await getUPrecomputesInputs(this.wallet)
   })
-  it('should generate the witness successfully and return correct mimc7', async function () {
+  it.only('should generate the witness successfully and return correct mimc7', async function () {
     const witness = await this.circuit.calculateWitness(this.baseInputs)
     await this.circuit.assertOut(witness, {})
     // Check commitment

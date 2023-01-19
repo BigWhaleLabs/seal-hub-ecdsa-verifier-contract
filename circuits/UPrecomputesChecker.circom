@@ -47,6 +47,12 @@ template UPrecomputesChecker(k, n) {
   }
 
   signal output hash <== mimc7.out;
+  // Debug
+  signal input msgHash;
+  log(msgHash);
+  signal input msgHashSplit[k];
+  signal input rInv; // r^{-1}
+  signal input rInvSplit[k];
 }
 
 component main = UPrecomputesChecker(4, 64);

@@ -47,15 +47,26 @@ export function getUAndSFromSignature(signature: string, message: string) {
     s: splitToRegisters(hexS),
     scalarForT: splitToRegisters(biR),
     scalarForU: splitToRegisters(w),
+    // Debug
+    msgHash: new BN(msgHash).toString(),
+    msgHashSplit: splitToRegisters(new BN(msgHash)),
+    rInv,
+    rInvSplit: splitToRegisters(rInv),
   }
 }
 
 async function inputsForMessage(signer: Wallet, message: string) {
   const signature = await signer.signMessage(message)
-  const { U, scalarForU } = getUAndSFromSignature(signature, message)
+  const { U, scalarForU, msgHash, msgHashSplit, rInv, rInvSplit } =
+    getUAndSFromSignature(signature, message)
+  console.log(msgHash)
   return {
     U,
     scalarForU,
+    msgHash,
+    msgHashSplit,
+    rInv,
+    rInvSplit,
   }
 }
 
