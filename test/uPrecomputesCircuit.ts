@@ -4,7 +4,7 @@ import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
 import getUPrecomputesInputs from '../utils/inputs/getUPrecomputesInputs'
 
-describe('UPrecomputesChecker circuit', function () {
+describe.only('UPrecomputesChecker circuit', function () {
   before(async function () {
     this.circuit = await wasmTester('circuits/UPrecomputesChecker.circom')
     this.wallet = Wallet.createRandom()

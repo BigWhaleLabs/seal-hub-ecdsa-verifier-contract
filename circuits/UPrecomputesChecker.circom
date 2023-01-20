@@ -7,27 +7,31 @@ include "../node_modules/circomlib/circuits/mimc.circom";
 
 // Check if scalar * groupPoint = precomp for precomputed U = r^{-1} * m * G, and hash(scalar * groupPoint) = hash(precomp)
 template UPrecomputesChecker(k, n) {
-  signal scalarForU[k]; // r^{-1} * m is the scalar
-  signal input rinv[k];
-  signal msgHashSplit[k];
-  signal input U[2][k]; // input precomputed value
+  // Message is predefined for SealHub
+  signal msgHash[k];
+  msgHash[0] <== 10098449060333729392;
+  msgHash[1] <== 824620465769997390;
+  msgHash[2] <== 6522454934198464922;
+  msgHash[3] <== 2124243329339765579;
 
+  // Calculate r^{-1} * m
+  signal input rInv[k];
+  signal scalarForU[k]; // r^{-1} * m is the scalar
   var order[100] = get_secp256k1_order(n, k);
+  log(order[0]);
+  log(order[1]);
+  log(order[2]);
+  log(order[3]);
+  log(order[4]);
+  log(order[5]);
 
   component scalarMulMod = BigMultModP(n, k);
-
-  msgHashSplit[0] <== 10098449060333729392;
-  msgHashSplit[1] <== 824620465769997390;
-  msgHashSplit[2] <== 6522454934198464922;
-  msgHashSplit[3] <== 2124243329339765579;
-
-  //calculate r^{-1} * m
+  
   for (var i = 0; i < k; i++){
-    scalarMulMod.a[i] <== rinv[i];
-    scalarMulMod.b[i] <== msgHashSplit[i];
+    scalarMulMod.a[i] <== rInv[i];
+    scalarMulMod.b[i] <== msgHash[i];
     scalarMulMod.p[i] <== order[i];
   }
-
   for (var i = 0; i < k; i++){
     scalarForU[i] <== scalarMulMod.out[i];
   }
@@ -45,8 +49,9 @@ template UPrecomputesChecker(k, n) {
     mul[0][i] <== scalarMul.pubkey[0][i];
     mul[1][i] <== scalarMul.pubkey[1][i];
   }
-  
   // Compare mul and precomp
+  signal input U[2][k]; // precomputed value
+
   component compare[2 * k];
 
   for (var i = 0; i < k; i++){
@@ -60,7 +65,6 @@ template UPrecomputesChecker(k, n) {
     compare[i + k].in[1] <== mul[1][i];
     compare[i + k].out === 1;
   }
-
   // Generate UPrecomputes hash
   component mimc7 = MultiMiMC7(2 * k, 91);
   mimc7.k <== 0;

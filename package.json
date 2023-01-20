@@ -37,7 +37,7 @@
     "download-public": "./scripts/download-public.sh"
   },
   "devDependencies": {
-    "@big-whale-labs/seal-hub-kit": "^0.0.20",
+    "@big-whale-labs/seal-hub-kit": "^0.0.21",
     "@big-whale-labs/versioned-contract": "^1.0.2",
     "@ethereumjs/util": "^8.0.3",
     "@ethersproject/providers": "^5.7.2",
