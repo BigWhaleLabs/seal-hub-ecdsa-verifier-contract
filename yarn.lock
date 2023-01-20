@@ -65,7 +65,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@big-whale-labs/seal-hub-ecdsa-verifier-contract@workspace:."
   dependencies:
-    "@big-whale-labs/seal-hub-kit": ^0.0.20
+    "@big-whale-labs/seal-hub-kit": ^0.0.21
     "@big-whale-labs/versioned-contract": ^1.0.2
     "@ethereumjs/util": ^8.0.3
     "@ethersproject/providers": ^5.7.2
@@ -112,9 +112,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@big-whale-labs/seal-hub-kit@npm:^0.0.20":
-  version: 0.0.20
-  resolution: "@big-whale-labs/seal-hub-kit@npm:0.0.20"
+"@big-whale-labs/seal-hub-kit@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@big-whale-labs/seal-hub-kit@npm:0.0.21"
   dependencies:
     "@big-whale-labs/constants": ^0.1.41
     "@big-whale-labs/seal-hub-contract": ^0.0.7
@@ -124,7 +124,7 @@ __metadata:
     circomlibjs: ^0.1.7
     elliptic: ^6.5.4
     ethers: ^5.7.2
-  checksum: 0a7f222f817ff7891cecfa0c8b9512c4ca81fd014ed507aa444871c1f6bdacf50d177042afddfedaa806c91d323c30a8707a755c31f001004108c84b7277a5d2
+  checksum: 9e1e8a6ecd0da053226217d83cc827a14c345a9f77ac59c5d4d7b9b04c91ec536ff978d5cc949c013c22e6892b98e52cba27fdd56a044f05678703653b99da89
   languageName: node
   linkType: hard
 

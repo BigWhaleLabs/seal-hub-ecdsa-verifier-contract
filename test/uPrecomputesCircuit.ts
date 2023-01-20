@@ -2,6 +2,7 @@ import { Wallet } from 'ethers'
 import { expect } from 'chai'
 import { wasm as wasmTester } from 'circom_tester'
 import Mimc7 from '../utils/Mimc7'
+import expectAssertFailure from '../utils/expectAssertFailure'
 import getUPrecomputesInputs from '../utils/inputs/getUPrecomputesInputs'
 
 describe('UPrecomputesChecker circuit', function () {
@@ -10,7 +11,7 @@ describe('UPrecomputesChecker circuit', function () {
     this.wallet = Wallet.createRandom()
     this.baseInputs = await getUPrecomputesInputs(this.wallet)
   })
-  it.only('should generate the witness successfully and return correct mimc7', async function () {
+  it('should generate the witness successfully and return correct mimc7', async function () {
     const witness = await this.circuit.calculateWitness(this.baseInputs)
     await this.circuit.assertOut(witness, {})
     // Check commitment
@@ -30,5 +31,9 @@ describe('UPrecomputesChecker circuit', function () {
     const mimc7 = await new Mimc7().prepare()
     const hash = mimc7.hash(inputs)
     expect(hash).not.to.equal(witness[1])
+  })
+  it('should fail because signature is wrong', async function () {
+    const inputs = await getUPrecomputesInputs(this.wallet, 'incorrect message')
+    await expectAssertFailure(() => this.circuit.calculateWitness(inputs))
   })
 })
