@@ -16,25 +16,39 @@ template UPrecomputesChecker(k, n) {
 
   // Calculate r^{-1} * m
   signal input rInv[k];
-  signal scalarForU[k]; // r^{-1} * m is the scalar
   var order[100] = get_secp256k1_order(n, k);
-  log(order[0]);
-  log(order[1]);
-  log(order[2]);
-  log(order[3]);
-  log(order[4]);
-  log(order[5]);
+
+  // Negate rInv
+  component negate = BigAdd(n, k);
+
+  for (var i = 0; i < k; i++){
+    negate.a[i] <== rInv[i];
+    negate.b[i] <== order[i];
+  }
+
+  signal negRInv[k];
+
+  for (var i = 0; i < k; i++){
+    negRInv[i] <== negate.out[i];
+  }
+  // Calculate scalar
+  signal scalarForU[k]; // r^{-1} * m is the scalar
 
   component scalarMulMod = BigMultModP(n, k);
   
   for (var i = 0; i < k; i++){
-    scalarMulMod.a[i] <== rInv[i];
+    scalarMulMod.a[i] <== negRInv[i];
     scalarMulMod.b[i] <== msgHash[i];
     scalarMulMod.p[i] <== order[i];
   }
   for (var i = 0; i < k; i++){
     scalarForU[i] <== scalarMulMod.out[i];
   }
+
+  log(scalarForU[0]);
+  log(scalarForU[1]);
+  log(scalarForU[2]);
+  log(scalarForU[3]);
 
   // Populate scalarMul
   component scalarMul = ECDSAPrivToPub(n, k); // computes scalar * G (using cached multiples)

@@ -42,6 +42,7 @@ export function getUAndSFromSignature(signature: string, message: string) {
   const rInv = new BN(biR).invm(SECP256K1_N)
   const w = rInv.mul(new BN(msgHash)).neg().umod(SECP256K1_N)
   const U = secp256k1.curve.g.mul(w)
+  console.log(splitToRegisters(w))
   return {
     U: [splitToRegisters(U.x), splitToRegisters(U.y)],
     s: splitToRegisters(hexS),
