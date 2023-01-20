@@ -7,27 +7,25 @@ include "../node_modules/circomlib/circuits/mimc.circom";
 
 // Check if scalar * groupPoint = precomp for precomputed U = r^{-1} * m * G, and hash(scalar * groupPoint) = hash(precomp)
 template UPrecomputesChecker(k, n) {
+  // Get prime order
+  var order[100] = get_secp256k1_order(n, k);
   // Message is predefined for SealHub
   signal msgHash[k];
   msgHash[0] <== 10098449060333729392;
   msgHash[1] <== 824620465769997390;
   msgHash[2] <== 6522454934198464922;
   msgHash[3] <== 2124243329339765579;
-
-  // Calculate r^{-1} * m
+  // Calculate -r^{-1} * m
   signal input rInv[k];
-  var order[100] = get_secp256k1_order(n, k);
-
-  // Negate rInv
-  component negate = BigAdd(n, k);
+  component negate = BigSubModP(n, k);
 
   for (var i = 0; i < k; i++){
-    negate.a[i] <== rInv[i];
-    negate.b[i] <== order[i];
+    negate.a[i] <== 0;
+    negate.b[i] <== rInv[i];
+    negate.p[i] <== order[i];
   }
 
   signal negRInv[k];
-
   for (var i = 0; i < k; i++){
     negRInv[i] <== negate.out[i];
   }
@@ -44,12 +42,6 @@ template UPrecomputesChecker(k, n) {
   for (var i = 0; i < k; i++){
     scalarForU[i] <== scalarMulMod.out[i];
   }
-
-  log(scalarForU[0]);
-  log(scalarForU[1]);
-  log(scalarForU[2]);
-  log(scalarForU[3]);
-
   // Populate scalarMul
   component scalarMul = ECDSAPrivToPub(n, k); // computes scalar * G (using cached multiples)
 
