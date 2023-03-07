@@ -28,7 +28,7 @@ starEcho "VERIFYING FINAL ZKEY"
 yarn snarkjs zkey verify "build/$1.r1cs" "pot/pot$3_final.ptau" "pot/$1_final.zkey"
 
 # Export verification key
-starEcho "Exporting vkey"
+starEcho "EXPORTING VKEY"
 yarn snarkjs zkey export verificationkey "pot/$1_final.zkey" "pot/$1_verification_key.json"
 
 # Create the proof
@@ -41,15 +41,18 @@ starEcho "VERIFYING PROOF FOR SAMPLE INPUT"
 yarn snarkjs groth16 verify "pot/$1_verification_key.json" "build/public-$2.json" "build/proof-$2.json"
 
 # Export the verifier as a smart contract
+starEcho "EXPORTING VERIFIER AS A SMART CONTRACT"
 yarn snarkjs zkey export solidityverifier "pot/$1_final.zkey" "contracts/$1Verifier.sol"
 
 # Change Solidity compiler version and contract name
+starEcho "CHANGING SOLIDITY COMPILER VERSION AND CONTRACT NAME"
 sed -i '' 's/0.6.11;/0.8.17;\n\nimport "@big-whale-labs\/versioned-contract\/contracts\/Versioned.sol";/' "contracts/$1Verifier.sol"
 sed -i '' "s/contract Verifier {/contract $1Verifier is Versioned {\nconstructor(string memory _version) Versioned(_version) {}/" "contracts/$1Verifier.sol"
 sed -i '' "s/Pairing/$1Pairing/g" "contracts/$1Verifier.sol"
 yarn prettify
 
 # Copy all the required files to the public directory
+starEcho "COPYING FILES TO PUBLIC DIRECTORY"
 cp "pot/$1_final.zkey" "public/$1_final.zkey"
 cp "pot/$1_verification_key.json" "public/$1_verification_key.json"
 cp "build/$1_js/$1.wasm" "public/$1.wasm"

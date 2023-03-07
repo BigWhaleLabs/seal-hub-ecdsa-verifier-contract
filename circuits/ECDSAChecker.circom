@@ -3,6 +3,7 @@ pragma circom 2.0.6;
 include "../efficient-zk-sig/circom-ecdsa-circuits/zk-identity/eth.circom";
 include "../efficient-zk-sig/ecdsa_verify.circom";
 include "../node_modules/circomlib/circuits/mimc.circom";
+include "../node_modules/circomlib/circuits/comparators.circom";
 include "./templates/TPrecomputesChecker.circom";
 
 template ECDSAChecker(k, n) {
@@ -86,6 +87,18 @@ template ECDSAChecker(k, n) {
   }
 
   signal output uHash <== uMimc7.out;
+  // Check if r is R, we have to output this, otherwise circom does not want to add constraints
+  component compare[k];
+  for (var i = 0; i < k; i++) {
+    compare[i] = IsEqual();
+    compare[i].in[0] <== scalarForT[i];
+    compare[i].in[1] <== T[0][i];
+    compare[i].out === 1;
+  }
+  signal output rCompareResult[k];
+  for (var i = 0; i < k; i++) {
+    rCompareResult[i] <== compare[i].out;
+  }
 }
 
 component main = ECDSAChecker(4, 64);

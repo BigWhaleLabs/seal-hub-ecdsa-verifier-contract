@@ -37,3 +37,7 @@ Also check out the `.env.example` file for more information.
 - `yarn release` — relases the `typechain` directory to NPM
 - `yarn download-ptau-{n}` — downloads the relevant ptau file
 - `yarn download-public` — downloads the relevant public binary files
+
+## Historical events
+
+- **2023-03-04**: @bankisan reported the exploit allowing to bypass the signature verification by setting both `r` and `s` to `1`. Hence the `test/ecdsaExploit.ts` file and the `exploit-proofs` folder. The exploit was fixed on 2023-03-06 before the code was deployed to mainnet.

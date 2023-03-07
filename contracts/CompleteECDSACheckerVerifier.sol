@@ -67,7 +67,7 @@ struct ECDSAProof {
   uint[2] a;
   uint[2][2] b;
   uint[2] c;
-  uint[2] input;
+  uint[6] input;
 }
 
 struct UPrecomputesProof {
