@@ -27,7 +27,7 @@
     "lint": "prettier --check . && eslint --max-warnings 0 --ext ts scripts test && yarn eth-lint",
     "prettify": "prettier --write .",
     "release": "np",
-    "prepublishOnly": "yarn build && yarn tsc",
+    "prepublishOnly": "yarn build && yarn tsc --skipLibCheck",
     "generate-inputs": "ts-node scripts/generate-inputs.ts",
     "compile-ecdsa": "scripts/compile-circuit.sh ECDSAChecker ecdsa 19",
     "compile-u-precomputes": "scripts/compile-circuit.sh UPrecomputesChecker u-precomputes 17",
