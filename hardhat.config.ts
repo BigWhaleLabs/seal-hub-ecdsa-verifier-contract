@@ -31,7 +31,7 @@ const config: HardhatUserConfig = {
     timeout: 240 * 1000,
   },
   solidity: {
-    version: '0.8.17',
+    version: '0.8.19',
     settings: {
       optimizer: {
         enabled: true,
